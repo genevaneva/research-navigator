@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUHSC Research Compliance Navigator</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #212529; background: #f8f9fa; min-height: 100vh; }
+.app-container { display: flex; flex-direction: column; min-height: 100vh; }
+.app-header { background: linear-gradient(135deg, #841617 0%, #6b1213 100%); color: white; padding: 2rem; }
+.header-content { max-width: 1200px; margin: 0 auto; }
+.app-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.subtitle { font-size: 1.1rem; opacity: 0.95; }
+.header-actions { max-width: 1200px; margin: 1rem auto 0; display: flex; gap: 1rem; }
+.main-content { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+.welcome-screen { display: flex; justify-content: center; align-items: center; min-height: 60vh; }
+.welcome-card { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 4px 16px rgba(0,0,0,0.15); max-width: 800px; }
+.welcome-card h2 { color: #841617; font-size: 2rem; margin-bottom: 1rem; }
+.welcome-card > p { font-size: 1.1rem; margin-bottom: 2rem; color: #6c757d; }
+.info-box { background: #f8f9fa; border-left: 4px solid #17a2b8; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 4px; }
+.info-box.warning { border-left-color: #ffc107; background: #fff9e6; }
+.info-box h3 { margin-bottom: 1rem; font-size: 1.1rem; }
+.info-box ul { margin-left: 1.5rem; }
+.info-box li { margin-bottom: 0.5rem; }
+.welcome-actions { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+.version-info { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 0.9rem; text-align: center; }
+.question-screen { display: none; }
+.question-screen.active { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start; }
+.question-container { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.progress-bar { width: 100%; height: 8px; background: #dee2e6; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #841617 0%, #a01d1e 100%); transition: width 0.3s; }
+.progress-text { text-align: center; color: #6c757d; font-size: 0.9rem; margin-bottom: 2rem; }
+.question-content { min-height: 300px; }
+.question-title { font-size: 1.5rem; color: #841617; margin-bottom: 1rem; font-weight: 600; }
+.question-help { background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 0.95rem; color: #6c757d; border-left: 3px solid #17a2b8; }
+.question-options { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+.option-button { background: white; border: 2px solid #dee2e6; padding: 1.25rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: left; font-size: 1rem; }
+.option-button:hover { border-color: #841617; background: #fef8f8; }
+.option-button.selected { border-color: #841617; background: #a01d1e; color: white; font-weight: 600; }
+.checkbox-option { background: white; border: 2px solid #dee2e6; padding: 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 1rem; }
+.checkbox-option:hover { border-color: #841617; background: #fef8f8; }
+.checkbox-option.selected { border-color: #841617; background: #fef8f8; }
+.checkbox-option input { width: 20px; height: 20px; }
+.navigation-buttons { display: flex; gap: 1rem; justify-content: space-between; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #dee2e6; }
+.checklist-sidebar { position: relative; }
+.sidebar-sticky { position: sticky; top: 2rem; background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.sidebar-sticky h3 { color: #841617; margin-bottom: 0.5rem; font-size: 1.25rem; }
+.sidebar-subtitle { color: #6c757d; font-size: 0.9rem; margin-bottom: 1rem; }
+.live-checklist { display: flex; flex-direction: column; gap: 1rem; }
+.empty-state { text-align: center; padding: 2rem 1rem; color: #6c757d; font-style: italic; }
+.checklist-item { background: #f8f9fa; padding: 1rem; border-radius: 6px; border-left: 4px solid #841617; font-size: 0.9rem; }
+.checklist-item-header { font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+.summary-screen { display: none; max-width: 1000px; margin: 0 auto; }
+.summary-screen.active { display: block; }
+.summary-container { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.summary-header { text-align: center; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid #dee2e6; }
+.summary-header h2 { color: #841617; font-size: 2rem; margin-bottom: 0.5rem; }
+.summary-subtitle { color: #6c757d; font-size: 1.1rem; }
+.summary-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+.summary-section { margin-bottom: 2rem; }
+.summary-section h3 { color: #841617; margin-bottom: 1rem; font-size: 1.5rem; }
+.summary-item { background: #f8f9fa; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid #841617; }
+.summary-item-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+.summary-item-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 0.9rem; color: #6c757d; }
+.summary-item-meta a { color: #841617; }
+.summary-footer { margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #dee2e6; }
+.btn { padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+.btn-primary { background: #841617; color: white; }
+.btn-primary:hover { background: #6b1213; }
+.btn-secondary { background: white; color: #841617; border: 2px solid #841617; }
+.btn-secondary:hover { background: #841617; color: white; }
+.btn-large { padding: 1rem 2rem; font-size: 1.1rem; }
+.app-footer { background: #212529; color: white; padding: 2rem; text-align: center; margin-top: auto; }
+.app-footer a { color: #ffc72c; }
+@media (max-width: 1024px) { .question-screen.active { grid-template-columns: 1fr; } .checklist-sidebar { order: -1; } .sidebar-sticky { position: relative; } }
+@media (max-width: 768px) { .welcome-card, .question-container, .summary-container { padding: 1.5rem; } .btn { width: 100%; justify-content: center; } .navigation-buttons, .summary-actions, .header-actions { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1>OUHSC Research Compliance Navigator</h1>
+                <p class="subtitle">Determine what approvals and submissions your research study requires</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="restartBtn" style="display: none;">Start Over</button>
+                <button class="btn btn-secondary" id="saveProgressBtn" style="display: none;">Save Progress</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-card">
+                    <h2>Welcome!</h2>
+                    <p>This tool will help you navigate the OUHSC research compliance requirements by asking a series of questions about your study.</p>
+                    <div class="info-box">
+                        <h3>What you'll get:</h3>
+                        <ul>
+                            <li>A personalized checklist of required approvals</li>
+                            <li>Contact information for each office</li>
+                            <li>Timeline estimates for each step</li>
+                            <li>Links to required forms and resources</li>
+                        </ul>
+                    </div>
+                    <div class="info-box warning">
+                        <h3>Important Notes:</h3>
+                        <ul>
+                            <li>This tool provides guidance only - final determinations are made by the IRB and other committees</li>
+                            <li>When in doubt, contact the IRB office at <strong>irb@ouhsc.edu</strong> or <strong>405-271-2045</strong></li>
+                            <li>You can save your progress and return later</li>
+                        </ul>
+                    </div>
+                    <div class="welcome-actions">
+                        <button class="btn btn-primary btn-large" id="startBtn">Start New Assessment</button>
+                        <button class="btn btn-secondary" id="loadProgressBtn" style="display: none;">Resume Previous Session</button>
+                    </div>
+                    <div class="version-info">Version 1.0 | Last Updated: 2025-01-16</div>
+                </div>
+            </div>
+
+            <div id="questionScreen" class="question-screen">
+                <div class="question-container">
+                    <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width: 10%;"></div></div>
+                    <div class="progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">12</span></div>
+                    <div id="questionContent" class="question-content"></div>
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+                        <button class="btn btn-primary" id="nextBtn" style="display: none;">Next</button>
+                        <button class="btn btn-primary" id="finishBtn" style="display: none;">View My Checklist</button>
+                    </div>
+                </div>
+                <div class="checklist-sidebar">
+                    <div class="sidebar-sticky">
+                        <h3>Your Checklist</h3>
+                        <p class="sidebar-subtitle">Items will appear as you answer questions</p>
+                        <div id="liveChecklist" class="live-checklist"><div class="empty-state"><p>No items yet...</p></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="summaryScreen" class="summary-screen">
+                <div class="summary-container">
+                    <div class="summary-header">
+                        <h2>Your Research Compliance Checklist</h2>
+                        <p class="summary-subtitle">Here's what you need to do based on your study characteristics</p>
+                    </div>
+                    <div class="summary-actions">
+                        <button class="btn btn-primary" id="printBtn">Print Checklist</button>
+                        <button class="btn btn-secondary" id="emailBtn">Email to Myself</button>
+                        <button class="btn btn-secondary" id="restartBtn2">Start New Assessment</button>
+                    </div>
+                    <div id="summaryContent" class="summary-content"></div>
+                    <div class="summary-footer">
+                        <div class="info-box">
+                            <h3>Need Help?</h3>
+                            <p><strong>IRB Office:</strong> irb@ouhsc.edu | 405-271-2045</p>
+                            <p><strong>Location:</strong> O'Donoghue Research Building, Suite CB202</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>University of Oklahoma Health Campus | Office of Clinical Research Informatics</p>
+            <p>For technical issues: <a href="mailto:geneva-daniel@ou.edu">geneva-daniel@ou.edu</a></p>
+        </footer>
+    </div>
+
+<script>
+(function() {
+    "use strict";
+
+    var decisionTree = {
+        questions: [
+            {id: "q1", text: "Does your project count as human subjects research?", type: "boolean", options: ["I'm unsure", "Yes, this is human subjects research"], helpText: "Human subjects research involves interaction with living individuals or obtaining identifiable private information.", checklistItems: {"I'm unsure": [{text: "Submit Determination of Human Research Worksheet via iRIS", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet", contact: "IRB: irb@ouhsc.edu | 405-271-2045", timeline: "5-7 business days"}]}, next: {"I'm unsure": "end", "Yes, this is human subjects research": "q2"}},
+            {id: "q2", text: "Does your study involve cancer patients, cancer survivors, or cancer-related outcomes?", type: "boolean", options: ["Yes", "No"], helpText: "Includes cancer diagnosis, treatment, prevention, or survivorship studies.", checklistItems: {"Yes": [{text: "Disease Site Group Review and Endorsement", priority: "REQUIRED BEFORE IRB", contact: "scc-prmc@ouhsc.edu", timeline: "3-4 months before study start"}, {text: "Feasibility Review Committee Approval", priority: "REQUIRED BEFORE IRB", contact: "scc-prmc@ouhsc.edu"}, {text: "PRMC Full Approval", priority: "REQUIRED BEFORE IRB", link: "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/", contact: "scc-prmc@ouhsc.edu"}]}, next: {"Yes": "q3", "No": "q3"}},
+            {id: "q3", text: "What type of study is this?", type: "single", options: ["Retrospective chart review / data analysis", "Prospective interventional", "Prospective observational", "Biospecimen collection/analysis", "Quality improvement project", "Other / Not sure"], next: {"Retrospective chart review / data analysis": "q4", "Prospective interventional": "q5", "Prospective observational": "q6", "Biospecimen collection/analysis": "q6", "Quality improvement project": "end", "Other / Not sure": "end"}},
+            {id: "q4", text: "Will you be accessing identifiable patient data (PHI)?", type: "boolean", options: ["Yes", "No"], helpText: "PHI includes names, dates, MRNs, phone numbers, emails, etc.", checklistItems: {"Yes": [{text: "IRB Submission - Full Protocol Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", contact: "IRB: irb@ouhsc.edu", timeline: "2-6 weeks"}, {text: "CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/"}, {text: "HIPAA Training", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HIPAA"}], "No": [{text: "IRB Submission - May Qualify as EXEMPT", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "1-2 weeks"}, {text: "CITI Training", priority: "REQUIRED", link: "https://about.citiprogram.org/"}]}, next: {"Yes": "q7", "No": "q7"}},
+            {id: "q5", text: "Does your study involve an investigational drug, biologic, or device?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Determine if IND/IDE is Required", priority: "CRITICAL", contact: "IRB: irb@ouhsc.edu", timeline: "3-6 months for FDA review"}, {text: "Investigational Pharmacy Coordination", priority: "REQUIRED"}, {text: "IRB Full Board Review", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "4-6 weeks"}], "No": [{text: "IRB Submission Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "2-6 weeks"}]}, next: {"Yes": "q6", "No": "q6"}},
+            {id: "q6", text: "Does your study involve any of the following?", type: "checkbox", options: ["Radiation or radioactive materials", "Recombinant DNA or biohazards", "VA Medical Center patients", "None of the above"], checklistItems: {"Radiation or radioactive materials": [{text: "Radiation Safety Committee Approval", priority: "REQUIRED BEFORE IRB", timeline: "2-3 months"}], "Recombinant DNA or biohazards": [{text: "IBC Approval", priority: "REQUIRED BEFORE IRB", contact: "ibc@ouhsc.edu", timeline: "1-2 months"}], "VA Medical Center patients": [{text: "VA R&D Committee Approval", priority: "REQUIRED", timeline: "2-3 months"}]}, next: "q7"},
+            {id: "q7", text: "Does your study have external funding?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Submit Through ORA", priority: "REQUIRED", contact: "ORA: 405-271-2090", link: "https://research.ouhsc.edu/ora", timeline: "5 days before deadline"}, {text: "Conflict of Interest Disclosure", priority: "REQUIRED"}]}, next: {"Yes": "q8", "No": "q8"}},
+            {id: "q8", text: "Will you need Epic EHR integration?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Contact Clinical Research Informatics", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/epic-for-research", timeline: "2-3 months before start"}]}, next: {"Yes": "q9", "No": "q9"}},
+            {id: "q9", text: "Does your study involve sharing data outside the university OR have a sample size over 500?", type: "checkbox", options: ["Sharing data externally", "Sample size over 500", "None of the above"], checklistItems: {"Sharing data externally": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc"}], "Sample size over 500": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc"}], "None of the above": [{text: "Explore OCRI Tools", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/ocri-resources"}]}, next: "q10"},
+            {id: "q10", text: "Is this a clinical trial that will enroll and track subjects?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Set Up Study in OnCore CTMS", priority: "REQUIRED", link: "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms", timeline: "1-2 months before activation"}, {text: "ClinicalTrials.gov Registration", priority: "REQUIRED", link: "https://clinicaltrials.gov/"}], "No": [{text: "Consider OnCore for Study Management", priority: "RECOMMENDED"}]}, next: "end"}
+        ],
+        fixedItems: [
+            {text: "Complete CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/", timeline: "Valid 3 years"},
+            {text: "Complete In-House IRB Training", priority: "REQUIRED", contact: "IRB: irb@ouhsc.edu"},
+            {text: "Compile IRB Submission Packet", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB"},
+            {text: "Submit Protocol to IRB via iRIS", priority: "REQUIRED", link: "https://iris.ouhsc.edu", timeline: "1-6 weeks depending on review type"},
+            {text: "Respond Promptly to IRB Requests", priority: "REQUIRED"}
+        ]
+    };
+
+    var state = {
+        currentIndex: 0,
+        answers: {},
+        checklist: [],
+        history: []
+    };
+
+    function $(id) { return document.getElementById(id); }
+
+    function startAssessment() {
+        state.currentIndex = 0;
+        state.answers = {};
+        state.checklist = [];
+        state.history = [];
+
+        $("welcomeScreen").style.display = "none";
+        $("questionScreen").className = "question-screen active";
+        $("summaryScreen").className = "summary-screen";
+        $("restartBtn").style.display = "inline-flex";
+        $("saveProgressBtn").style.display = "inline-flex";
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        var q = decisionTree.questions[state.currentIndex];
+        var content = $("questionContent");
+
+        var html = '<h2 class="question-title">' + q.text + '</h2>';
+        if (q.helpText) {
+            html += '<div class="question-help"><strong>Note:</strong> ' + q.helpText + '</div>';
+        }
+        html += '<div class="question-options" id="optionsContainer"></div>';
+        content.innerHTML = html;
+
+        var container = $("optionsContainer");
+        var savedAnswer = state.answers[q.id];
+
+        if (q.type === "checkbox") {
+            var selectedArr = savedAnswer || [];
+            for (var i = 0; i < q.options.length; i++) {
+                (function(opt, idx) {
+                    var checked = selectedArr.indexOf(opt) !== -1;
+                    var label = document.createElement("label");
+                    label.className = "checkbox-option" + (checked ? " selected" : "");
+
+                    var checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = opt;
+                    checkbox.checked = checked;
+                    checkbox.addEventListener("change", function() {
+                        handleCheckbox(q.id, this);
+                    });
+
+                    var span = document.createElement("span");
+                    span.textContent = opt;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(span);
+                    container.appendChild(label);
+                })(q.options[i], i);
+            }
+        } else {
+            for (var i = 0; i < q.options.length; i++) {
+                (function(opt) {
+                    var btn = document.createElement("button");
+                    btn.className = "option-button" + (savedAnswer === opt ? " selected" : "");
+                    btn.textContent = opt;
+                    btn.addEventListener("click", function() {
+                        selectOption(q.id, opt);
+                    });
+                    container.appendChild(btn);
+                })(q.options[i]);
+            }
+        }
+
+        var pct = ((state.currentIndex + 1) / decisionTree.questions.length) * 100;
+        $("progressFill").style.width = pct + "%";
+        $("currentQuestion").textContent = state.currentIndex + 1;
+        $("totalQuestions").textContent = decisionTree.questions.length;
+
+        $("prevBtn").style.display = state.history.length > 0 ? "inline-flex" : "none";
+
+        var isLast = (q.next === "end" || (typeof q.next === "object" && q.next[savedAnswer] === "end"));
+        $("finishBtn").style.display = isLast && savedAnswer ? "inline-flex" : "none";
+        $("nextBtn").style.display = !isLast && savedAnswer ? "inline-flex" : "none";
+    }
+
+    function selectOption(qid, option) {
+        state.answers[qid] = option;
+        updateChecklist(qid, option);
+        showQuestion();
+    }
+
+    function handleCheckbox(qid, checkbox) {
+        if (!state.answers[qid]) state.answers[qid] = [];
+        var val = checkbox.value;
+        var idx = state.answers[qid].indexOf(val);
+        if (checkbox.checked && idx === -1) {
+            state.answers[qid].push(val);
+        } else if (!checkbox.checked && idx !== -1) {
+            state.answers[qid].splice(idx, 1);
+        }
+        updateChecklist(qid, state.answers[qid]);
+
+        var label = checkbox.parentElement;
+        label.className = "checkbox-option" + (checkbox.checked ? " selected" : "");
+
+        var hasSelection = state.answers[qid] && state.answers[qid].length > 0;
+        var q = decisionTree.questions[state.currentIndex];
+        $("nextBtn").style.display = hasSelection && q.next !== "end" ? "inline-flex" : "none";
+        $("finishBtn").style.display = hasSelection && q.next === "end" ? "inline-flex" : "none";
+    }
+
+    function updateChecklist(qid, answer) {
+        state.checklist = state.checklist.filter(function(item) { return item.qid !== qid; });
+
+        var q = null;
+        for (var i = 0; i < decisionTree.questions.length; i++) {
+            if (decisionTree.questions[i].id === qid) { q = decisionTree.questions[i]; break; }
+        }
+        if (!q || !q.checklistItems) return;
+
+        var answers = Array.isArray(answer) ? answer : [answer];
+        for (var i = 0; i < answers.length; i++) {
+            var ans = answers[i];
+            if (q.checklistItems[ans]) {
+                for (var j = 0; j < q.checklistItems[ans].length; j++) {
+                    var item = q.checklistItems[ans][j];
+                    state.checklist.push({qid: qid, text: item.text, priority: item.priority, link: item.link, contact: item.contact, timeline: item.timeline});
+                }
+            }
+        }
+        updateLiveChecklist();
+    }
+
+    function updateLiveChecklist() {
+        var container = $("liveChecklist");
+        if (state.checklist.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>No items yet...</p></div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < state.checklist.length; i++) {
+            var item = state.checklist[i];
+            var badge = item.priority.indexOf("REQUIRED") !== -1 ? "Required" : "Recommended";
+            html += '<div class="checklist-item"><div class="checklist-item-header">' + badge + ': ' + item.text + '</div></div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function nextQuestion() {
+        var q = decisionTree.questions[state.currentIndex];
+        var answer = state.answers[q.id];
+        if (!answer) return;
+
+        state.history.push(state.currentIndex);
+
+        var nextId = typeof q.next === "string" ? q.next : q.next[answer] || q.next[Object.keys(q.next)[0]];
+        if (nextId === "end") {
+            showSummary();
+            return;
+        }
+
+        for (var i = 0; i < decisionTree.questions.length; i++) {
+            if (decisionTree.questions[i].id === nextId) {
+                state.currentIndex = i;
+                break;
+            }
+        }
+        showQuestion();
+    }
+
+    function previousQuestion() {
+        if (state.history.length === 0) return;
+        state.currentIndex = state.history.pop();
+        showQuestion();
+    }
+
+    function showSummary() {
+        $("questionScreen").className = "question-screen";
+        $("summaryScreen").className = "summary-screen active";
+
+        var allItems = state.checklist.slice();
+        for (var i = 0; i < decisionTree.fixedItems.length; i++) {
+            var exists = false;
+            for (var j = 0; j < allItems.length; j++) {
+                if (allItems[j].text === decisionTree.fixedItems[i].text) { exists = true; break; }
+            }
+            if (!exists) allItems.push(decisionTree.fixedItems[i]);
+        }
+
+        var required = allItems.filter(function(x) { return x.priority && x.priority.indexOf("REQUIRED") !== -1; });
+        var recommended = allItems.filter(function(x) { return x.priority && x.priority.indexOf("RECOMMENDED") !== -1; });
+
+        var html = '';
+        if (required.length > 0) {
+            html += '<div class="summary-section"><h3>Required Actions</h3>';
+            for (var i = 0; i < required.length; i++) {
+                var item = required[i];
+                html += '<div class="summary-item"><div class="summary-item-title">' + (i+1) + '. ' + item.text + '</div>';
+                html += '<div class="summary-item-meta">';
+                if (item.timeline) html += '<span>Timeline: ' + item.timeline + '</span>';
+                if (item.contact) html += '<span>Contact: ' + item.contact + '</span>';
+                if (item.link) html += '<span><a href="' + item.link + '" target="_blank">More Info</a></span>';
+                html += '</div></div>';
+            }
+            html += '</div>';
+        }
+        if (recommended.length > 0) {
+            html += '<div class="summary-section"><h3>Recommended Actions</h3>';
+            for (var i = 0; i < recommended.length; i++) {
+                var item = recommended[i];
+                html += '<div class="summary-item"><div class="summary-item-title">' + (i+1) + '. ' + item.text + '</div>';
+                html += '<div class="summary-item-meta">';
+                if (item.timeline) html += '<span>Timeline: ' + item.timeline + '</span>';
+                if (item.contact) html += '<span>Contact: ' + item.contact + '</span>';
+                if (item.link) html += '<span><a href="' + item.link + '" target="_blank">More Info</a></span>';
+                html += '</div></div>';
+            }
+            html += '</div>';
+        }
+        $("summaryContent").innerHTML = html;
+    }
+
+    function restart() {
+        if (confirm("Start a new assessment? Your progress will be lost.")) {
+            location.reload();
+        }
+    }
+
+    function saveProgress() {
+        try {
+            localStorage.setItem("ouhsc_nav", JSON.stringify(state));
+            alert("Progress saved!");
+        } catch(e) {
+            alert("Could not save progress.");
+        }
+    }
+
+    function loadProgress() {
+        try {
+            var data = JSON.parse(localStorage.getItem("ouhsc_nav"));
+            state.answers = data.answers;
+            state.checklist = data.checklist;
+            state.currentIndex = data.currentIndex;
+            state.history = data.history;
+            $("welcomeScreen").style.display = "none";
+            $("questionScreen").className = "question-screen active";
+            $("restartBtn").style.display = "inline-flex";
+            $("saveProgressBtn").style.display = "inline-flex";
+            updateLiveChecklist();
+            showQuestion();
+        } catch(e) {
+            alert("Could not load progress.");
+        }
+    }
+
+    function emailChecklist() {
+        var subject = encodeURIComponent("OUHSC Research Compliance Checklist");
+        var body = "OUHSC Research Compliance Checklist\n\n";
+        for (var i = 0; i < state.checklist.length; i++) {
+            body += (i+1) + ". " + state.checklist[i].text + "\n";
+        }
+        body += "\nContact: IRB Office irb@ouhsc.edu | 405-271-2045";
+        window.location.href = "mailto:?subject=" + subject + "&body=" + encodeURIComponent(body);
+    }
+
+    function init() {
+        $("startBtn").addEventListener("click", startAssessment);
+        $("prevBtn").addEventListener("click", previousQuestion);
+        $("nextBtn").addEventListener("click", nextQuestion);
+        $("finishBtn").addEventListener("click", showSummary);
+        $("restartBtn").addEventListener("click", restart);
+        $("restartBtn2").addEventListener("click", restart);
+        $("saveProgressBtn").addEventListener("click", saveProgress);
+        $("loadProgressBtn").addEventListener("click", loadProgress);
+        $("printBtn").addEventListener("click", function() { window.print(); });
+        $("emailBtn").addEventListener("click", emailChecklist);
+
+        try {
+            if (localStorage.getItem("ouhsc_nav")) {
+                $("loadProgressBtn").style.display = "inline-flex";
+            }
+        } catch(e) {}
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
+</html>

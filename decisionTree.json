@@ -1,0 +1,667 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-01-16",
+    "maintainer": "Geneva Daniel, Senior Data Scientist, Office of Clinical Research Informatics",
+    "contacts": {
+      "IRB": {
+        "email": "irb@ouhsc.edu",
+        "phone": "405-271-2045",
+        "location": "O'Donoghue Research Building, Suite CB202",
+        "address": "1122 NE 13th Street, Suite CB202, OKC, OK 73117"
+      },
+      "ORA": {
+        "phone": "405-271-2090",
+        "fax": "405-271-8651",
+        "location": "865 Research Parkway, URP865-450",
+        "address": "865 Research Parkway, URP865-450, Oklahoma City, OK 73104-3609"
+      },
+      "Cancer_Center_PRMC": {
+        "email": "scc-prmc@ouhsc.edu",
+        "link": "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/"
+      },
+      "Clinical_Research_Informatics": {
+        "link": "https://research.ouhsc.edu/epic-for-research"
+      },
+      "OnCore_Support": {
+        "link": "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms"
+      },
+      "IBC": {
+        "email": "ibc@ouhsc.edu"
+      },
+      "CRIOC": {
+        "link": "https://research.ouhsc.edu/crioc",
+        "note": "Clinical Research Informatics Operations Committee"
+      },
+      "OCRI_Resources": {
+        "link": "https://research.ouhsc.edu/ocri-resources",
+        "note": "Office of Clinical Research Informatics Tools and Resources"
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "q1_determination",
+      "text": "Does your project count as human subjects research?",
+      "type": "boolean",
+      "helpText": "Human subjects research is defined as a systematic investigation designed to develop or contribute to generalizable knowledge that involves interaction or intervention with living individuals or obtaining identifiable private information.",
+      "options": ["I'm unsure", "Yes, this is human subjects research"],
+      "checklistItems": {
+        "I'm unsure": [
+          {
+            "text": "Submit Determination of Human Research Worksheet via iRIS",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet",
+            "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+            "timeline": "Allow 5-7 business days for determination",
+            "note": "The IRB will review your submission and determine if it meets the definition of human subjects research. You will receive notification via iRIS with next steps."
+          }
+        ]
+      },
+      "routing": {
+        "I'm unsure": "end_determination",
+        "Yes, this is human subjects research": "q2_cancer"
+      }
+    },
+    {
+      "id": "q2_cancer",
+      "text": "Does your study involve cancer patients, cancer survivors, or cancer-related outcomes?",
+      "type": "boolean",
+      "helpText": "This includes studies with cancer as the primary diagnosis, cancer treatment studies, cancer prevention studies, cancer survivorship studies, or any study where the primary target population has or had cancer.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Disease Site Group Review and Endorsement",
+            "priority": "REQUIRED BEFORE IRB",
+            "order": 1,
+            "contact": "scc-prmc@ouhsc.edu",
+            "timeline": "Submit 3-4 months before intended study start",
+            "note": "The Disease Site Group will review the protocol to assess applicability to patient populations, identify competing trials, and ensure alignment with Disease Group goals."
+          },
+          {
+            "text": "Feasibility Review Committee Approval",
+            "priority": "REQUIRED BEFORE IRB",
+            "order": 2,
+            "contact": "scc-prmc@ouhsc.edu",
+            "timeline": "After Disease Site Group approval",
+            "note": "The FRC assesses operational complexities to ensure effective resource utilization, operational feasibility, and appropriate cost allocation."
+          },
+          {
+            "text": "Protocol Review and Monitoring Committee (PRMC) Full Approval",
+            "priority": "REQUIRED BEFORE IRB",
+            "order": 3,
+            "link": "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/",
+            "contact": "scc-prmc@ouhsc.edu",
+            "timeline": "After Feasibility Review; allow 2-3 months total for all cancer center reviews",
+            "note": "PRMC reviews for scientific merit, statistical validity, design feasibility, inclusion of underrepresented populations, and study prioritization. IRB approval cannot be granted without PRMC approval."
+          }
+        ]
+      },
+      "routing": {
+        "Yes": "q3_study_type",
+        "No": "q3_study_type"
+      }
+    },
+    {
+      "id": "q3_study_type",
+      "text": "What type of study is this?",
+      "type": "single_choice",
+      "options": [
+        "Retrospective chart review / data analysis only",
+        "Prospective interventional (drug, device, procedure, behavioral intervention)",
+        "Prospective observational (surveys, interviews, focus groups)",
+        "Biospecimen collection and/or analysis",
+        "Quality improvement project",
+        "Other / Not sure"
+      ],
+      "routing": {
+        "Retrospective chart review / data analysis only": "q4_retro_phi",
+        "Prospective interventional (drug, device, procedure, behavioral intervention)": "q5_intervention",
+        "Prospective observational (surveys, interviews, focus groups)": "q6_observational",
+        "Biospecimen collection and/or analysis": "q6_biospecimen",
+        "Quality improvement project": "q_qi",
+        "Other / Not sure": "q_contact_irb"
+      }
+    },
+    {
+      "id": "q4_retro_phi",
+      "text": "Will you be accessing or using identifiable patient data (PHI)?",
+      "type": "boolean",
+      "helpText": "Protected Health Information (PHI) includes: names, dates (except year), phone numbers, email addresses, medical record numbers (MRNs), account numbers, IP addresses, biometric identifiers, full face photos, or any other unique identifying information per HIPAA.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "IRB Submission - Full Protocol Required",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
+            "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+            "timeline": "Expedited review: 2-3 weeks | Full Board: 4-6 weeks from complete submission",
+            "details": [
+              "Complete protocol document describing study aims, methods, and data analysis plan",
+              "HIPAA waiver or authorization form",
+              "Data security and confidentiality plan",
+              "Complete personnel list with roles and responsibilities",
+              "Data collection instruments/forms"
+            ]
+          },
+          {
+            "text": "All Personnel: Complete CITI Human Subjects Research Training",
+            "priority": "REQUIRED",
+            "order": 2,
+            "link": "https://about.citiprogram.org/",
+            "note": "Use your @ouhsc.edu email address to register. Required modules include Basic Course or Refresher Course.",
+            "timeline": "Must be completed before IRB submission"
+          },
+          {
+            "text": "All Personnel: Complete In-House IRB Training",
+            "priority": "REQUIRED",
+            "order": 3,
+            "contact": "IRB Office: irb@ouhsc.edu",
+            "note": "Contact the IRB office to schedule in-house training for all study personnel."
+          },
+          {
+            "text": "HIPAA Compliance Training",
+            "priority": "REQUIRED",
+            "order": 4,
+            "link": "https://compliance.ouhsc.edu/HIPAA",
+            "note": "All personnel accessing PHI must complete HIPAA training."
+          }
+        ],
+        "No": [
+          {
+            "text": "IRB Submission - May Qualify as EXEMPT",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
+            "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+            "timeline": "Exempt determination: 1-2 weeks from complete submission",
+            "note": "Final determination of exempt status is made by the IRB, not the investigator. Submit via iRIS.",
+            "details": [
+              "Brief protocol description",
+              "Description of data sources",
+              "Data handling and security procedures",
+              "Personnel list"
+            ]
+          },
+          {
+            "text": "All Personnel: Complete CITI Human Subjects Research Training",
+            "priority": "REQUIRED",
+            "order": 2,
+            "link": "https://about.citiprogram.org/",
+            "note": "Use your @ouhsc.edu email address"
+          }
+        ]
+      },
+      "routing": {
+        "Yes": "q7_funding",
+        "No": "q7_funding"
+      }
+    },
+    {
+      "id": "q5_intervention",
+      "text": "Does your study involve an investigational drug, biologic, or device?",
+      "type": "boolean",
+      "helpText": "This includes: (1) drugs/biologics not FDA-approved for marketing, (2) FDA-approved drugs/biologics used for non-approved indications, dosages, formulations, or populations, (3) investigational medical devices, or (4) drugs obtained under an IND from another sponsor.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Determine if IND/IDE is Required",
+            "priority": "CRITICAL",
+            "order": 1,
+            "note": "Consult with IRB or contact FDA to determine if an Investigational New Drug (IND) or Investigational Device Exemption (IDE) application is required. You may be designated as the Sponsor-Investigator.",
+            "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+            "timeline": "Allow 3-6 months for IND/IDE preparation and FDA review",
+            "details": [
+              "If IND required: Submit IND application to FDA",
+              "Maintain current Investigator's Brochure",
+              "Establish drug accountability system",
+              "Coordinate with investigational pharmacy",
+              "Submit annual reports to FDA",
+              "Report adverse events per FDA timelines"
+            ]
+          },
+          {
+            "text": "Investigational Pharmacy Coordination",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Contact investigational pharmacy early in protocol development for drug storage, handling, and dispensing requirements."
+          },
+          {
+            "text": "IRB Submission - Full Board Review Required",
+            "priority": "REQUIRED",
+            "order": 3,
+            "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
+            "timeline": "Full Board review: 4-6 weeks from complete submission; meetings held monthly",
+            "details": [
+              "Complete protocol with drug/device information",
+              "Informed consent form with all required elements",
+              "Investigator's Brochure or device manual",
+              "IND or IDE approval documentation (if applicable)",
+              "Drug/device information and safety data"
+            ]
+          }
+        ],
+        "No": [
+          {
+            "text": "IRB Submission Required",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
+            "note": "May qualify for Expedited review if risk is minimal. Full Board review required if greater than minimal risk.",
+            "timeline": "Expedited: 2-3 weeks | Full Board: 4-6 weeks"
+          }
+        ]
+      },
+      "routing": {
+        "Yes": "q6_additional_approvals",
+        "No": "q6_additional_approvals"
+      }
+    },
+    {
+      "id": "q6_observational",
+      "text": "Does your observational study involve any of the following? (Select all that apply)",
+      "type": "checkbox",
+      "options": [
+        "Vulnerable populations (children, prisoners, pregnant women, decisionally impaired)",
+        "Audio or video recording of participants",
+        "Collection of sensitive information (illegal activities, sexual behavior, substance use)",
+        "None of the above"
+      ],
+      "checklistItems": {
+        "Vulnerable populations (children, prisoners, pregnant women, decisionally impaired)": [
+          {
+            "text": "Additional IRB Review for Vulnerable Populations",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "Studies involving vulnerable populations require additional protections and may require Full Board review.",
+            "details": [
+              "Assent procedures for children (if applicable)",
+              "Parental permission for minors",
+              "Pregnancy testing requirements (if applicable)",
+              "Additional safeguards documentation"
+            ]
+          }
+        ],
+        "Audio or video recording of participants": [
+          {
+            "text": "Audio/Video Recording Consent",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "Informed consent must include specific language about recording, how recordings will be used, stored, and destroyed.",
+            "details": [
+              "Storage and security plan for recordings",
+              "Transcription procedures (if applicable)",
+              "Destruction timeline",
+              "Who will have access to recordings"
+            ]
+          }
+        ],
+        "Collection of sensitive information (illegal activities, sexual behavior, substance use)": [
+          {
+            "text": "Certificate of Confidentiality",
+            "priority": "RECOMMENDED",
+            "order": 1,
+            "note": "Consider obtaining a Certificate of Confidentiality from NIH to protect against forced disclosure of identifiable research information.",
+            "link": "https://grants.nih.gov/policy/humansubjects/coc.htm"
+          }
+        ]
+      },
+      "routing": "q6_additional_approvals"
+    },
+    {
+      "id": "q6_biospecimen",
+      "text": "Will you be collecting NEW biospecimens from participants?",
+      "type": "boolean",
+      "helpText": "Select 'Yes' if you will be obtaining blood, tissue, saliva, urine, or any other biological samples FROM participants as part of this study. Select 'No' if you are only analyzing existing stored specimens.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Biospecimen Collection and Storage Plan",
+            "priority": "REQUIRED IN PROTOCOL",
+            "order": 1,
+            "details": [
+              "Collection procedures and volumes",
+              "Storage location and conditions",
+              "Specimen tracking system",
+              "Future use plans (if any)",
+              "Destruction timeline",
+              "Banking procedures (if applicable)"
+            ]
+          },
+          {
+            "text": "IRB Submission",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Biospecimen collection typically qualifies for Expedited review if minimal risk and no more than minimal discomfort."
+          }
+        ],
+        "No": [
+          {
+            "text": "IRB Submission - Existing Specimen Analysis",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "May qualify for Exempt review if specimens are de-identified or analyzed as part of existing approved study."
+          }
+        ]
+      },
+      "routing": "q6_additional_approvals"
+    },
+    {
+      "id": "q6_additional_approvals",
+      "text": "Does your study involve any of the following? (Select all that apply)",
+      "type": "checkbox",
+      "options": [
+        "Radiation or radioactive materials",
+        "Recombinant DNA, infectious agents, toxins, or other biohazards",
+        "Recruiting or enrolling patients at the VA Medical Center",
+        "None of the above"
+      ],
+      "checklistItems": {
+        "Radiation or radioactive materials": [
+          {
+            "text": "Radiation Safety Committee Approval",
+            "priority": "REQUIRED BEFORE IRB",
+            "order": 1,
+            "contact": "Radiation Safety Office",
+            "timeline": "Submit 2-3 months before IRB submission",
+            "note": "Required for any use of radioactive materials, radiation-producing equipment, or procedures involving radiation exposure beyond standard of care."
+          }
+        ],
+        "Recombinant DNA, infectious agents, toxins, or other biohazards": [
+          {
+            "text": "Institutional Biosafety Committee (IBC) Approval",
+            "priority": "REQUIRED BEFORE IRB",
+            "order": 1,
+            "contact": "ibc@ouhsc.edu",
+            "timeline": "Submit 1-2 months before IRB submission",
+            "note": "Required for research involving recombinant or synthetic nucleic acids, biohazardous agents, or select agents and toxins."
+          }
+        ],
+        "Recruiting or enrolling patients at the VA Medical Center": [
+          {
+            "text": "VA Research and Development Committee Approval",
+            "priority": "REQUIRED",
+            "order": 1,
+            "timeline": "Submit 2-3 months in advance of intended enrollment",
+            "note": "Separate VA R&D approval is required for any research activities at the Oklahoma City VA Medical Center, even if approved by OUHSC IRB."
+          }
+        ]
+      },
+      "routing": "q7_funding"
+    },
+    {
+      "id": "q7_funding",
+      "text": "Does your study have external funding?",
+      "type": "boolean",
+      "helpText": "External funding includes: federal grants (NIH, NSF, DoD, etc.), foundation funding, industry sponsorship, nonprofit organization support, or any other funding source outside of your department or institution.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Submit Proposal Through Office of Research Administration (ORA)",
+            "priority": "REQUIRED BEFORE AWARD ACCEPTANCE",
+            "order": 1,
+            "contact": "ORA: 405-271-2090 | Fax: 405-271-8651",
+            "link": "https://research.ouhsc.edu/ora",
+            "location": "865 Research Parkway, URP865-450, Oklahoma City, OK 73104-3609",
+            "timeline": "Submit at least 5 business days before sponsor deadline",
+            "note": "The institution cannot accept award funding without ORA routing and approval.",
+            "details": [
+              "Complete budget and budget justification",
+              "NIH biosketches for all key personnel (if NIH funding)",
+              "Current and pending support for all key personnel",
+              "Facilities and resources document",
+              "Letters of support/commitment (if applicable)",
+              "Institutional commitment letters (if cost-sharing required)"
+            ]
+          },
+          {
+            "text": "Obtain ORA Routing and Final Approval",
+            "priority": "REQUIRED",
+            "order": 2,
+            "contact": "ORA: 405-271-2090",
+            "note": "All proposals must be routed through ORA for institutional review, approval, and signature. This includes review of budget, compliance requirements, and institutional commitments."
+          },
+          {
+            "text": "Conflict of Interest Disclosure",
+            "priority": "REQUIRED",
+            "order": 3,
+            "note": "All investigators must disclose financial conflicts of interest related to the research. Required by federal regulation for PHS-funded research."
+          }
+        ]
+      },
+      "routing": {
+        "Yes": "q8_epic",
+        "No": "q8_epic"
+      }
+    },
+    {
+      "id": "q8_epic",
+      "text": "Will you need Epic EHR integration for your study?",
+      "type": "boolean",
+      "helpText": "Epic integration may be needed if you require: research-specific order sets, study documentation templates, automated subject identification in patient charts, data collection through Epic forms, or interface with OnCore for subject enrollment.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Contact Clinical Research Informatics Team",
+            "priority": "RECOMMENDED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/epic-for-research",
+            "timeline": "Initiate contact 2-3 months before anticipated study start date",
+            "note": "The Clinical Research Informatics team can help with Epic functionality to support your research study.",
+            "details": [
+              "Research order sets (if needed for standardized procedures)",
+              "Research coordinator note templates",
+              "Subject identification banner in Epic",
+              "OnCore-Epic interface for subject demographics and enrollment",
+              "MyChart questionnaires for patient-reported outcomes (if applicable)",
+              "Custom Epic reports (if needed)"
+            ]
+          },
+          {
+            "text": "Plan for Epic Training",
+            "priority": "RECOMMENDED",
+            "order": 2,
+            "note": "Research coordinators will need Epic training on research-specific functionality and documentation."
+          }
+        ]
+      },
+      "routing": {
+        "Yes": "q8b_crioc",
+        "No": "q8b_crioc"
+      }
+    },
+    {
+      "id": "q8b_crioc",
+      "text": "Does your study involve any of the following? (Select all that apply)",
+      "type": "checkbox",
+      "helpText": "CRIOC (Clinical Research Informatics Operations Committee) review is required for studies that share data outside the university or involve large patient populations. This ensures proper data governance and security.",
+      "options": [
+        "Sharing data outside of the university (external collaborators, sponsors, registries)",
+        "Sample size exceeding 500 patients",
+        "None of the above"
+      ],
+      "checklistItems": {
+        "Sharing data outside of the university (external collaborators, sponsors, registries)": [
+          {
+            "text": "CRIOC Review Required - External Data Sharing",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/crioc",
+            "note": "Studies that share data outside the university must be reviewed by the Clinical Research Informatics Operations Committee (CRIOC) to ensure proper data governance, security protocols, and compliance with institutional policies.",
+            "timeline": "Submit for CRIOC review early in study planning"
+          }
+        ],
+        "Sample size exceeding 500 patients": [
+          {
+            "text": "CRIOC Review Required - Large Sample Size",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/crioc",
+            "note": "Studies with sample sizes exceeding 500 patients require CRIOC review to assess data infrastructure needs, ensure appropriate resource allocation, and verify data handling procedures.",
+            "timeline": "Submit for CRIOC review early in study planning"
+          }
+        ],
+        "None of the above": [
+          {
+            "text": "Explore OCRI Tools and Resources",
+            "priority": "RECOMMENDED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/ocri-resources",
+            "note": "The Office of Clinical Research Informatics offers various tools and resources that may benefit your study, including data extraction support, REDCap, research data warehousing, and more. Review available resources to see if any could enhance your research."
+          }
+        ]
+      },
+      "routing": "q9_oncore"
+    },
+    {
+      "id": "q9_oncore",
+      "text": "Is this a clinical trial that will enroll and track subjects?",
+      "type": "boolean",
+      "helpText": "Clinical trials include interventional studies where participants are assigned to receive specific interventions and outcomes are evaluated. This includes drug/device trials, behavioral interventions, and treatment studies.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Set Up Study in OnCore CTMS",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms",
+            "timeline": "Request access 1-2 months before study activation",
+            "note": "REQUIRED per institutional policy effective March 25, 2025. OnCore is OUHSC's designated Clinical Trial Management System (CTMS) for protocol management, subject enrollment, financial tracking, and regulatory compliance.",
+            "details": [
+              "Protocol setup and calendar",
+              "Subject enrollment and consent tracking",
+              "Visit scheduling and tracking",
+              "Financial management and billing compliance",
+              "Biospecimen tracking (if applicable)",
+              "Adverse event reporting",
+              "Regulatory document management"
+            ]
+          },
+          {
+            "text": "Request OnCore Account and Complete Training",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Required roles: Protocol Manager (for PIs and study coordinators managing protocol) and/or Research Coordinator (for subject enrollment and visit management). Training must be completed before account activation.",
+            "timeline": "Allow 1-2 weeks for account setup and training"
+          },
+          {
+            "text": "ClinicalTrials.gov Registration",
+            "priority": "REQUIRED FOR APPLICABLE TRIALS",
+            "order": 3,
+            "note": "Required by federal law for applicable clinical trials within 21 days of enrolling first participant. OnCore can assist with trial registration.",
+            "link": "https://clinicaltrials.gov/"
+          }
+        ],
+        "No": [
+          {
+            "text": "Consider OnCore for Study Management",
+            "priority": "RECOMMENDED",
+            "order": 1,
+            "note": "OnCore can be used for observational studies and registries to track participants, manage visits, and store study documents. Contact OnCore support to discuss if beneficial for your study."
+          }
+        ]
+      },
+      "routing": "q10_final"
+    },
+    {
+      "id": "q10_final",
+      "text": "Review and finalize your compliance checklist",
+      "type": "summary",
+      "fixedChecklistItems": [
+        {
+          "text": "All Study Personnel: Complete CITI Human Subjects Research Training",
+          "priority": "REQUIRED",
+          "order": 1,
+          "link": "https://about.citiprogram.org/",
+          "note": "All personnel listed on IRB application must complete appropriate CITI training modules BEFORE IRB submission. Use @ouhsc.edu email to register. Courses include: Basic Course (for new researchers) or Refresher Course (if previously completed).",
+          "timeline": "Valid for 3 years"
+        },
+        {
+          "text": "All Study Personnel: Complete In-House IRB Training",
+          "priority": "REQUIRED",
+          "order": 2,
+          "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+          "note": "In-house IRB training covers OUHSC-specific policies and procedures. Contact IRB office to schedule training for your research team."
+        },
+        {
+          "text": "Compile Complete IRB Submission Packet",
+          "priority": "REQUIRED",
+          "order": 3,
+          "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
+          "note": "Ensure all required documents are complete before submission to avoid delays.",
+          "details": [
+            "Protocol document with all required sections",
+            "Informed consent form(s) with all required elements",
+            "HIPAA authorization or waiver justification",
+            "Recruitment materials (flyers, scripts, advertisements)",
+            "Data collection instruments (surveys, questionnaires, case report forms)",
+            "Grant application (if externally funded)",
+            "All approval letters from other committees (Cancer Center, IBC, Radiation Safety, etc.)",
+            "Investigator's Brochure or device manual (if applicable)",
+            "Collaborative agreements or reliance agreements (if multi-site)",
+            "Personnel list with roles, qualifications, and training completion"
+          ]
+        },
+        {
+          "text": "Submit Protocol to IRB via iRIS",
+          "priority": "REQUIRED",
+          "order": 4,
+          "link": "https://iris.ouhsc.edu",
+          "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+          "timeline": "Exempt determination: 1-2 weeks | Expedited review: 2-3 weeks | Full Board review: 4-6 weeks (from complete submission; meetings held monthly)",
+          "note": "There is no such thing as retroactive IRB approval. Do not begin any research activities until you receive IRB approval notification."
+        },
+        {
+          "text": "Respond Promptly to IRB Requests",
+          "priority": "REQUIRED",
+          "order": 5,
+          "note": "If the IRB requests modifications or additional information, respond as quickly as possible. Delays in responding extend the overall approval timeline. Incomplete responses may require additional review cycles."
+        }
+      ],
+      "routing": "summary"
+    },
+    {
+      "id": "q_qi",
+      "text": "Quality Improvement Project",
+      "type": "info",
+      "content": "Quality improvement (QI) projects may not require IRB review if they meet specific criteria. However, the distinction between QI and research can be complex.",
+      "checklistItems": [
+        {
+          "text": "Submit Determination of Human Research Worksheet",
+          "priority": "RECOMMENDED",
+          "order": 1,
+          "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet",
+          "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+          "note": "Let the IRB make the determination of whether your QI project constitutes human subjects research. Better to ask than to assume."
+        }
+      ],
+      "routing": "end_determination"
+    },
+    {
+      "id": "q_contact_irb",
+      "text": "Contact IRB for Guidance",
+      "type": "info",
+      "content": "Your study doesn't fit the standard categories. We recommend contacting the IRB office for personalized guidance.",
+      "checklistItems": [
+        {
+          "text": "Schedule IRB Consultation",
+          "priority": "RECOMMENDED",
+          "order": 1,
+          "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
+          "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/OUHSC-Institutional-Review-Board/Consultation-and-Training-Requests",
+          "note": "The IRB offers consultations to help investigators determine requirements for their specific study. This is especially helpful for unusual or complex research designs."
+        }
+      ],
+      "routing": "end_determination"
+    }
+  ]
+}

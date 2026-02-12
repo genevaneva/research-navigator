@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "2.0",
     "lastUpdated": "2025-01-16",
     "maintainer": "Geneva Daniel, Senior Data Scientist, Office of Clinical Research Informatics",
     "contacts": {
@@ -43,7 +43,11 @@
       },
       "BERD": {
         "link": "https://osctr.ouhsc.edu/",
-        "note": "Biostatistics, Epidemiology, and Research Design support"
+        "note": "Biostatistics, Epidemiology, and Research Design support through OSCTR"
+      },
+      "BBMC": {
+        "link": "https://ouhsc.edu/bbmc/",
+        "note": "Biomedical and Behavioral Methodology Core - Specialized biostatistics support for pediatric research"
       },
       "Clinical_Research_Data_Warehouse": {
         "link": "https://research.ouhsc.edu/ocri-resources",
@@ -53,7 +57,34 @@
         "link": "https://osctr.ouhsc.edu/",
         "note": "Oklahoma Clinical and Translational Science Institute"
       }
-    }
+    },
+    "timelinePhases": [
+      {
+        "id": 0,
+        "name": "Training, Feasibility & Planning",
+        "icon": "graduation-cap",
+        "note": "Can begin immediately, in parallel with all other phases. Complete feasibility assessments before any submissions."
+      },
+      {
+        "id": 1,
+        "name": "Pre-Submission Reviews",
+        "icon": "clipboard-check",
+        "note": "Committee reviews required before IRB submission"
+      },
+      {
+        "id": 2,
+        "name": "Regulatory Submissions",
+        "icon": "file-text",
+        "parallel": true,
+        "note": "IRB and ORA submissions can proceed concurrently. IRB may request funding details from ORA; ORA may need the IRB protocol number."
+      },
+      {
+        "id": 3,
+        "name": "Post-Approval & Study Startup",
+        "icon": "rocket",
+        "note": "Activities after receiving IRB approval"
+      }
+    ]
   },
   "questions": [
     {
@@ -71,7 +102,10 @@
             "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet",
             "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
             "timeline": "Allow 5-7 business days for determination",
-            "note": "The IRB will review your submission and determine if it meets the definition of human subjects research. You will receive notification via iRIS with next steps."
+            "note": "The IRB will review your submission and determine if it meets the definition of human subjects research. You will receive notification via iRIS with next steps.",
+            "phase": 2,
+            "track": "A",
+            "duration": "5-7 business days"
           }
         ]
       },
@@ -100,7 +134,10 @@
               "Disease Site Group Review: Assesses applicability to patient populations, identifies competing trials, and ensures alignment with Disease Group goals",
               "Feasibility Review Committee (FRC): Evaluates operational complexities, resource utilization, operational feasibility, and cost allocation",
               "Protocol Review and Monitoring Committee (PRMC): Reviews scientific merit, statistical validity, design feasibility, inclusion of underrepresented populations, and study prioritization"
-            ]
+            ],
+            "phase": 1,
+            "track": "A",
+            "duration": "8-12 weeks"
           }
         ]
       },
@@ -111,10 +148,11 @@
     },
     {
       "id": "q3_study_type",
-      "text": "What type of study is this?",
-      "type": "single_choice",
+      "text": "What type(s) of study is this? (Select all that apply)",
+      "type": "checkbox",
+      "helpText": "Many studies span multiple categories. For example, a study may involve both retrospective chart review and prospective biospecimen collection. Select all that apply to ensure you receive guidance for every component.",
       "options": [
-        "Retrospective chart review / data analysis only",
+        "Retrospective chart review / data analysis",
         "Prospective interventional (drug, device, procedure, behavioral intervention)",
         "Prospective observational (surveys, interviews, focus groups)",
         "Biospecimen collection and/or analysis",
@@ -122,7 +160,7 @@
         "Other / Not sure"
       ],
       "routing": {
-        "Retrospective chart review / data analysis only": "q4_retro_phi",
+        "Retrospective chart review / data analysis": "q4_retro_phi",
         "Prospective interventional (drug, device, procedure, behavioral intervention)": "q5_intervention",
         "Prospective observational (surveys, interviews, focus groups)": "q6_observational",
         "Biospecimen collection and/or analysis": "q6_biospecimen",
@@ -151,7 +189,10 @@
               "Data security and confidentiality plan",
               "Complete personnel list with roles and responsibilities",
               "Data collection instruments/forms"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Expedited: 2-3 weeks | Full Board: 4-6 weeks"
           },
           {
             "text": "All Personnel: Complete CITI Human Subjects Research Training",
@@ -159,21 +200,30 @@
             "order": 2,
             "link": "https://about.citiprogram.org/",
             "note": "Use your @ouhsc.edu email address to register. Required modules include Basic Course or Refresher Course.",
-            "timeline": "Must be completed before IRB submission"
+            "timeline": "Must be completed before IRB submission",
+            "phase": 0,
+            "track": "A",
+            "duration": "4-8 hours, valid 3 years"
           },
           {
             "text": "All Personnel: Complete In-House IRB Training",
             "priority": "REQUIRED",
             "order": 3,
             "contact": "IRB Office: irb@ouhsc.edu",
-            "note": "Contact the IRB office to schedule in-house training for all study personnel."
+            "note": "Contact the IRB office to schedule in-house training for all study personnel.",
+            "phase": 0,
+            "track": "A",
+            "duration": "Schedule with IRB"
           },
           {
             "text": "HIPAA Compliance Training",
             "priority": "REQUIRED",
             "order": 4,
             "link": "https://compliance.ouhsc.edu/HIPAA",
-            "note": "All personnel accessing PHI must complete HIPAA training."
+            "note": "All personnel accessing PHI must complete HIPAA training.",
+            "phase": 0,
+            "track": "A",
+            "duration": "1-2 hours"
           }
         ],
         "No": [
@@ -190,14 +240,20 @@
               "Description of data sources",
               "Data handling and security procedures",
               "Personnel list"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Exempt: 1-2 weeks"
           },
           {
             "text": "All Personnel: Complete CITI Human Subjects Research Training",
             "priority": "REQUIRED",
             "order": 2,
             "link": "https://about.citiprogram.org/",
-            "note": "Use your @ouhsc.edu email address"
+            "note": "Use your @ouhsc.edu email address",
+            "phase": 0,
+            "track": "A",
+            "duration": "4-8 hours, valid 3 years"
           }
         ]
       },
@@ -218,23 +274,31 @@
             "text": "Determine if IND/IDE is Required",
             "priority": "CRITICAL",
             "order": 1,
-            "note": "Consult with IRB or contact FDA to determine if an Investigational New Drug (IND) or Investigational Device Exemption (IDE) application is required. You may be designated as the Sponsor-Investigator.",
+            "note": "Consult with IRB or contact FDA to determine if an Investigational New Drug (IND) or Investigational Device Exemption (IDE) application is required. You may be designated as the Sponsor-Investigator. Note: All IND/IDE studies are required to be set up in OnCore CTMS.",
             "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
             "timeline": "Allow 3-6 months for IND/IDE preparation and FDA review",
             "details": [
-              "If IND required: Submit IND application to FDA",
+              "If IND required: Submit IND application to FDA (Form 1571)",
+              "Complete FDA Form 1572 (Investigator Statement) for each site investigator",
               "Maintain current Investigator's Brochure",
               "Establish drug accountability system",
               "Coordinate with investigational pharmacy",
               "Submit annual reports to FDA",
-              "Report adverse events per FDA timelines"
-            ]
+              "IND safety reporting: 7 calendar days for fatal/life-threatening events, 15 calendar days for serious unexpected adverse events",
+              "Good Clinical Practice (GCP) training required for all clinical trial personnel"
+            ],
+            "phase": 1,
+            "track": "B",
+            "duration": "3-6 months"
           },
           {
             "text": "Investigational Pharmacy Coordination",
             "priority": "REQUIRED",
             "order": 2,
-            "note": "Contact investigational pharmacy early in protocol development for drug storage, handling, and dispensing requirements."
+            "note": "Contact investigational pharmacy early in protocol development for drug storage, handling, and dispensing requirements.",
+            "phase": 1,
+            "track": "F",
+            "duration": "Concurrent with IND"
           },
           {
             "text": "IRB Submission - Full Board Review Required",
@@ -248,7 +312,10 @@
               "Investigator's Brochure or device manual",
               "IND or IDE approval documentation (if applicable)",
               "Drug/device information and safety data"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Full Board: 4-6 weeks"
           }
         ],
         "No": [
@@ -258,7 +325,10 @@
             "order": 1,
             "link": "https://compliance.ouhsc.edu/HRPP/HSC-IRB",
             "note": "May qualify for Expedited review if risk is minimal. Full Board review required if greater than minimal risk.",
-            "timeline": "Expedited: 2-3 weeks | Full Board: 4-6 weeks"
+            "timeline": "Expedited: 2-3 weeks | Full Board: 4-6 weeks",
+            "phase": 2,
+            "track": "A",
+            "duration": "Expedited: 2-3 weeks | Full Board: 4-6 weeks"
           }
         ]
       },
@@ -289,7 +359,10 @@
               "Parental permission for minors",
               "Pregnancy testing requirements (if applicable)",
               "Additional safeguards documentation"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Included in IRB review"
           }
         ],
         "Audio or video recording of participants": [
@@ -303,7 +376,10 @@
               "Transcription procedures (if applicable)",
               "Destruction timeline",
               "Who will have access to recordings"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Included in consent process"
           }
         ],
         "Collection of sensitive information (illegal activities, sexual behavior, substance use)": [
@@ -312,7 +388,10 @@
             "priority": "RECOMMENDED",
             "order": 1,
             "note": "Consider obtaining a Certificate of Confidentiality from NIH to protect against forced disclosure of identifiable research information.",
-            "link": "https://grants.nih.gov/policy/humansubjects/coc.htm"
+            "link": "https://grants.nih.gov/policy/humansubjects/coc.htm",
+            "phase": 2,
+            "track": "A",
+            "duration": "Apply during IRB submission"
           }
         ]
       },
@@ -337,13 +416,19 @@
               "Future use plans (if any)",
               "Destruction timeline",
               "Banking procedures (if applicable)"
-            ]
+            ],
+            "phase": 2,
+            "track": "A",
+            "duration": "Include in protocol"
           },
           {
             "text": "IRB Submission",
             "priority": "REQUIRED",
             "order": 2,
-            "note": "Biospecimen collection typically qualifies for Expedited review if minimal risk and no more than minimal discomfort."
+            "note": "Biospecimen collection typically qualifies for Expedited review if minimal risk and no more than minimal discomfort.",
+            "phase": 2,
+            "track": "A",
+            "duration": "Expedited: 2-3 weeks"
           }
         ],
         "No": [
@@ -351,7 +436,10 @@
             "text": "IRB Submission - Existing Specimen Analysis",
             "priority": "REQUIRED",
             "order": 1,
-            "note": "May qualify for Exempt review if specimens are de-identified or analyzed as part of existing approved study."
+            "note": "May qualify for Exempt review if specimens are de-identified or analyzed as part of existing approved study.",
+            "phase": 2,
+            "track": "A",
+            "duration": "Exempt: 1-2 weeks"
           }
         ]
       },
@@ -375,7 +463,10 @@
             "order": 1,
             "contact": "Radiation Safety Office",
             "timeline": "Submit 2-3 months before IRB submission",
-            "note": "Required for any use of radioactive materials, radiation-producing equipment, or procedures involving radiation exposure beyond standard of care."
+            "note": "Required for any use of radioactive materials, radiation-producing equipment, or procedures involving radiation exposure beyond standard of care.",
+            "phase": 1,
+            "track": "C",
+            "duration": "8-12 weeks"
           }
         ],
         "Recombinant DNA, infectious agents, toxins, or other biohazards": [
@@ -385,7 +476,10 @@
             "order": 1,
             "contact": "ibc@ouhsc.edu",
             "timeline": "Submit 1-2 months before IRB submission",
-            "note": "Required for research involving recombinant or synthetic nucleic acids, biohazardous agents, or select agents and toxins."
+            "note": "Required for research involving recombinant or synthetic nucleic acids, biohazardous agents, or select agents and toxins.",
+            "phase": 1,
+            "track": "D",
+            "duration": "4-8 weeks"
           }
         ],
         "Recruiting or enrolling patients at the VA Medical Center": [
@@ -394,7 +488,10 @@
             "priority": "REQUIRED",
             "order": 1,
             "timeline": "Submit 2-3 months in advance of intended enrollment",
-            "note": "Separate VA R&D approval is required for any research activities at the Oklahoma City VA Medical Center, even if approved by OUHSC IRB."
+            "note": "Separate VA R&D approval is required for any research activities at the Oklahoma City VA Medical Center, even if approved by OUHSC IRB.",
+            "phase": 1,
+            "track": "E",
+            "duration": "8-12 weeks"
           }
         ]
       },
@@ -404,7 +501,7 @@
       "id": "q7_funding",
       "text": "Does your study have external funding?",
       "type": "boolean",
-      "helpText": "External funding includes: federal grants (NIH, NSF, DoD, etc.), foundation funding, industry sponsorship, nonprofit organization support, or any other funding source outside of your department or institution.",
+      "helpText": "External funding includes: federal grants (NIH, NSF, DoD, etc.), foundation funding, industry sponsorship, nonprofit organization support, or any other funding source outside of your department or institution. Tip: IRB and ORA submissions can proceed concurrently in most cases. Begin both submissions simultaneously to minimize your total timeline.",
       "options": ["Yes", "No"],
       "checklistItems": {
         "Yes": [
@@ -416,7 +513,7 @@
             "link": "https://research.ouhsc.edu/ora",
             "location": "865 Research Parkway, URP865-450, Oklahoma City, OK 73104-3609",
             "timeline": "Submit at least 5 business days before sponsor deadline",
-            "note": "The institution cannot accept award funding without ORA routing and approval.",
+            "note": "The institution cannot accept award funding without ORA routing and approval. IRB and ORA submissions can proceed concurrently; ORA requires the grant application, budget, and institutional commitment letters.",
             "details": [
               "Complete budget and budget justification",
               "NIH biosketches for all key personnel (if NIH funding)",
@@ -424,20 +521,29 @@
               "Facilities and resources document",
               "Letters of support/commitment (if applicable)",
               "Institutional commitment letters (if cost-sharing required)"
-            ]
+            ],
+            "phase": 2,
+            "track": "B",
+            "duration": "5 business days before deadline"
           },
           {
             "text": "Obtain ORA Routing and Final Approval",
             "priority": "REQUIRED",
             "order": 2,
             "contact": "ORA: 405-271-2090",
-            "note": "All proposals must be routed through ORA for institutional review, approval, and signature. This includes review of budget, compliance requirements, and institutional commitments."
+            "note": "All proposals must be routed through ORA for institutional review, approval, and signature. This includes review of budget, compliance requirements, and institutional commitments.",
+            "phase": 2,
+            "track": "B",
+            "duration": "Varies by sponsor"
           },
           {
             "text": "Conflict of Interest Disclosure",
             "priority": "REQUIRED",
             "order": 3,
-            "note": "All investigators must disclose financial conflicts of interest related to the research. Required by federal regulation for PHS-funded research."
+            "note": "All investigators must disclose financial conflicts of interest related to the research. Required by federal regulation for PHS-funded research.",
+            "phase": 2,
+            "track": "C",
+            "duration": "1-2 weeks"
           }
         ]
       },
@@ -468,13 +574,33 @@
               "OnCore-Epic interface for subject demographics and enrollment",
               "MyChart questionnaires for patient-reported outcomes (if applicable)",
               "Custom Epic reports (if needed)"
-            ]
+            ],
+            "phase": 3,
+            "track": "B",
+            "duration": "2-3 months"
+          },
+          {
+            "text": "Obtain Epic Account and Access Permissions",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Research personnel who need Epic access must have an Epic account with appropriate permissions. Epic account permissions must be submitted by your supervisor (or whoever would be your supervisor in Epic). There are two types of access: full documentation access and read-only access.",
+            "details": [
+              "Your supervisor/Epic supervisor submits the access request on your behalf",
+              "Full Documentation Access: For coordinators who will document in Epic (see Epic Documentation Access Instructions)",
+              "Read-Only Access: For personnel who only need to view patient records (see Epic Read-Only Access Instructions)"
+            ],
+            "phase": 3,
+            "track": "B",
+            "duration": "Submit early - account setup takes time"
           },
           {
             "text": "Plan for Epic Training",
             "priority": "RECOMMENDED",
-            "order": 2,
-            "note": "Research coordinators will need Epic training on research-specific functionality and documentation."
+            "order": 3,
+            "note": "Research coordinators will need Epic training on research-specific functionality and documentation.",
+            "phase": 3,
+            "track": "B",
+            "duration": "Included in Epic setup"
           }
         ]
       },
@@ -500,8 +626,11 @@
             "priority": "REQUIRED",
             "order": 1,
             "link": "https://research.ouhsc.edu/crioc",
-            "note": "Studies that share data outside the university must be reviewed by the Clinical Research Informatics Operations Committee (CRIOC) to ensure proper data governance, security protocols, and compliance with institutional policies.",
-            "timeline": "Submit for CRIOC review early in study planning"
+            "note": "Studies that share data outside the university must be reviewed by the Clinical Research Informatics Operations Committee (CRIOC) to ensure proper data governance, security protocols, and compliance with institutional policies. Submit CRIOC review when your IRB submission is submitted.",
+            "timeline": "Submit concurrent with IRB submission",
+            "phase": 2,
+            "track": "D",
+            "duration": "Submit with IRB"
           }
         ],
         "Sample size exceeding 500 patients": [
@@ -510,8 +639,11 @@
             "priority": "REQUIRED",
             "order": 1,
             "link": "https://research.ouhsc.edu/crioc",
-            "note": "Studies with sample sizes exceeding 500 patients require CRIOC review to assess data infrastructure needs, ensure appropriate resource allocation, and verify data handling procedures.",
-            "timeline": "Submit for CRIOC review early in study planning"
+            "note": "Studies with sample sizes exceeding 500 patients require CRIOC review to assess data infrastructure needs, ensure appropriate resource allocation, and verify data handling procedures. Submit CRIOC review when your IRB submission is submitted.",
+            "timeline": "Submit concurrent with IRB submission",
+            "phase": 2,
+            "track": "D",
+            "duration": "Submit with IRB"
           }
         ],
         "None of the above": [
@@ -520,7 +652,10 @@
             "priority": "RECOMMENDED",
             "order": 1,
             "link": "https://research.ouhsc.edu/ocri-resources",
-            "note": "The Office of Clinical Research Informatics offers various tools and resources that may benefit your study, including data extraction support, REDCap, research data warehousing, and more. Review available resources to see if any could enhance your research."
+            "note": "The Office of Clinical Research Informatics offers various tools and resources that may benefit your study, including data extraction support, REDCap, research data warehousing, and more. Review available resources to see if any could enhance your research.",
+            "phase": 3,
+            "track": "D",
+            "duration": ""
           }
         ]
       },
@@ -528,12 +663,19 @@
     },
     {
       "id": "q9_oncore",
-      "text": "Is this a clinical trial that will enroll and track subjects?",
-      "type": "boolean",
-      "helpText": "Clinical trials include interventional studies where participants are assigned to receive specific interventions and outcomes are evaluated. This includes drug/device trials, behavioral interventions, and treatment studies.",
-      "options": ["Yes", "No"],
+      "text": "Does your study require OnCore CTMS? (Select all that apply)",
+      "type": "checkbox",
+      "helpText": "OnCore is required if ANY of the following apply: the study is a clinical trial enrolling subjects, has a billable component, uses MyChart messaging for recruitment, requires subject study status to appear in Epic, or involves an IND or IDE. If none apply, OnCore is still recommended for study management.",
+      "options": [
+        "Clinical trial enrolling and tracking subjects",
+        "Study has a billable component",
+        "Using MyChart messaging for recruitment",
+        "Subject study status needs to appear in Epic/OnCore",
+        "Study involves an IND or IDE",
+        "None of the above"
+      ],
       "checklistItems": {
-        "Yes": [
+        "Clinical trial enrolling and tracking subjects": [
           {
             "text": "Set Up Study in OnCore CTMS",
             "priority": "REQUIRED",
@@ -549,29 +691,170 @@
               "Biospecimen tracking (if applicable)",
               "Adverse event reporting",
               "Regulatory document management"
-            ]
+            ],
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
           },
           {
             "text": "Request OnCore Account and Complete Training",
             "priority": "REQUIRED",
             "order": 2,
-            "note": "Required roles: Protocol Manager (for PIs and study coordinators managing protocol) and/or Research Coordinator (for subject enrollment and visit management). Training must be completed before account activation.",
-            "timeline": "Allow 1-2 weeks for account setup and training"
+            "link": "https://research.ouhsc.edu/oncore",
+            "note": "New OnCore users must complete the 'Basics of OnCore' curriculum via OnPoint before their account is activated. Training is assigned based on requested roles (Protocol Management, Subject Management, Financials, etc.). Limited access is granted if role-specific trainings beyond basics are not completed. For non-oncology users, submit an OnCore User Account Request via the IT support portal. For oncology users, contact SCCTrainingandSupport@ou.edu. Account creation takes 3-5 business days after training completion.",
+            "contact": "General: CTMS-support@ouhsc.edu | Oncology: SCCTrainingandSupport@ou.edu",
+            "timeline": "Allow 1-2 weeks for training and account setup",
+            "details": [
+              "Complete 'Basics of OnCore' curriculum (required for all users)",
+              "Request roles: Protocol Manager, Research Coordinator, Financials, etc.",
+              "Receive two activation emails: training environment and production environment",
+              "Activation links expire after 24 hours - activate promptly",
+              "Log in with OUHSC or OU Health credentials"
+            ],
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 weeks for training + account setup"
           },
           {
             "text": "ClinicalTrials.gov Registration",
             "priority": "REQUIRED FOR APPLICABLE TRIALS",
             "order": 3,
-            "note": "Required by federal law for applicable clinical trials within 21 days of enrolling first participant. OnCore can assist with trial registration.",
-            "link": "https://clinicaltrials.gov/"
+            "note": "Required by FDAAA 801 and the Final Rule (42 CFR Part 11) for applicable clinical trials. Results must be reported within 1 year of primary completion date. OnCore can assist with trial registration.",
+            "link": "https://clinicaltrials.gov/",
+            "phase": 3,
+            "track": "A",
+            "duration": "Registration within 21 days of first enrollment; results within 1 year of completion"
           }
         ],
-        "No": [
+        "Study has a billable component": [
+          {
+            "text": "OnCore CTMS Required - Billable Study",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms",
+            "note": "Studies with billable components must be set up in OnCore for financial management, billing compliance, and coverage analysis.",
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
+          }
+        ],
+        "Using MyChart messaging for recruitment": [
+          {
+            "text": "OnCore CTMS Required - MyChart Recruitment",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "Studies using MyChart messaging for participant recruitment must be registered in OnCore to enable the MyChart-OnCore integration.",
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
+          }
+        ],
+        "Subject study status needs to appear in Epic/OnCore": [
+          {
+            "text": "OnCore CTMS Required - Subject Study Status in Epic",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "If subject study enrollment status needs to appear in Epic (e.g., research subject banner), the study must be configured in OnCore with the OnCore-Epic interface.",
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
+          }
+        ],
+        "Study involves an IND or IDE": [
+          {
+            "text": "OnCore CTMS Required - IND/IDE Study",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "All studies operating under an Investigational New Drug (IND) or Investigational Device Exemption (IDE) are required to be set up in OnCore for regulatory compliance and subject tracking.",
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
+          }
+        ],
+        "None of the above": [
           {
             "text": "Consider OnCore for Study Management",
             "priority": "RECOMMENDED",
             "order": 1,
-            "note": "OnCore can be used for observational studies and registries to track participants, manage visits, and store study documents. Contact OnCore support to discuss if beneficial for your study."
+            "note": "OnCore can be used for observational studies and registries to track participants, manage visits, and store study documents. Contact OnCore support to discuss if beneficial for your study.",
+            "phase": 3,
+            "track": "A",
+            "duration": ""
+          }
+        ]
+      },
+      "routing": "q9b_oncore_setup"
+    },
+    {
+      "id": "q9b_oncore_setup",
+      "text": "Is OU Health Campus the IRB board of record for this study?",
+      "type": "boolean",
+      "helpText": "If OUHSC IRB is the reviewing IRB (board of record), your iRIS submission can be automatically linked to OnCore. If another institution's IRB is the board of record (e.g., via a reliance agreement), you will need to create your OnCore protocol manually.",
+      "options": ["Yes", "No"],
+      "checklistItems": {
+        "Yes": [
+          {
+            "text": "Complete iRIS-to-OnCore Questionnaire",
+            "priority": "REQUIRED",
+            "order": 1,
+            "link": "https://redcap.link/iris2oncore",
+            "note": "Since OU Health Campus is the IRB of record, complete this REDCap questionnaire to automatically create your OnCore protocol from your iRIS submission. This streamlines protocol setup and avoids duplicate data entry.",
+            "timeline": "Complete after IRB submission is in iRIS",
+            "phase": 3,
+            "track": "A",
+            "duration": "Complete after iRIS submission"
+          },
+          {
+            "text": "OnCore Calendar and Coverage Analysis",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Once your OnCore protocol is created, work with your OnCore support contact to build the study calendar and complete coverage analysis (if applicable). For non-oncology studies, contact Geneva-Daniel@ou.edu. For oncology studies, contact SCCTrainingandSupport@ou.edu.",
+            "contact": "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu",
+            "phase": 3,
+            "track": "A",
+            "duration": "Concurrent with IRB review"
+          },
+          {
+            "text": "Complete Research Study Activation Questionnaire",
+            "priority": "REQUIRED",
+            "order": 3,
+            "note": "Once your OnCore protocol is correct, has a completed calendar, and coverage analysis (if applicable), complete the Research Study Activation Questionnaire to push the study to Epic. This is required before any study activities can begin in the clinical environment.",
+            "timeline": "After OnCore protocol, calendar, and coverage analysis are finalized",
+            "phase": 3,
+            "track": "A",
+            "duration": "After OnCore setup is complete"
+          }
+        ],
+        "No": [
+          {
+            "text": "Create OnCore Protocol Manually",
+            "priority": "REQUIRED",
+            "order": 1,
+            "note": "Since OU Health Campus is not the IRB of record, you will need to create your OnCore protocol manually rather than using the iRIS-to-OnCore questionnaire. Contact your OnCore support contact for assistance. For non-oncology studies, contact Geneva-Daniel@ou.edu. For oncology studies, contact SCCTrainingandSupport@ou.edu.",
+            "contact": "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu",
+            "phase": 3,
+            "track": "A",
+            "duration": "1-2 months"
+          },
+          {
+            "text": "OnCore Calendar and Coverage Analysis",
+            "priority": "REQUIRED",
+            "order": 2,
+            "note": "Work with your OnCore support contact to build the study calendar and complete coverage analysis (if applicable). For non-oncology studies, contact Geneva-Daniel@ou.edu. For oncology studies, contact SCCTrainingandSupport@ou.edu.",
+            "contact": "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu",
+            "phase": 3,
+            "track": "A",
+            "duration": "Concurrent with IRB review"
+          },
+          {
+            "text": "Complete Research Study Activation Questionnaire",
+            "priority": "REQUIRED",
+            "order": 3,
+            "note": "Once your OnCore protocol is correct, has a completed calendar, and coverage analysis (if applicable), complete the Research Study Activation Questionnaire to push the study to Epic. This is required before any study activities can begin in the clinical environment.",
+            "timeline": "After OnCore protocol, calendar, and coverage analysis are finalized",
+            "phase": 3,
+            "track": "A",
+            "duration": "After OnCore setup is complete"
           }
         ]
       },
@@ -588,14 +871,20 @@
           "order": 1,
           "link": "https://about.citiprogram.org/",
           "note": "All personnel listed on IRB application must complete appropriate CITI training modules BEFORE IRB submission. Use @ouhsc.edu email to register. Courses include: Basic Course (for new researchers) or Refresher Course (if previously completed).",
-          "timeline": "Valid for 3 years"
+          "timeline": "Valid for 3 years",
+          "phase": 0,
+          "track": "A",
+          "duration": "4-8 hours, valid 3 years"
         },
         {
           "text": "All Study Personnel: Complete In-House IRB Training",
           "priority": "REQUIRED",
           "order": 2,
           "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
-          "note": "In-house IRB training covers OUHSC-specific policies and procedures. Contact IRB office to schedule training for your research team."
+          "note": "In-house IRB training covers OUHSC-specific policies and procedures. Contact IRB office to schedule training for your research team.",
+          "phase": 0,
+          "track": "A",
+          "duration": "Schedule with IRB"
         },
         {
           "text": "Compile Complete IRB Submission Packet",
@@ -614,7 +903,10 @@
             "Investigator's Brochure or device manual (if applicable)",
             "Collaborative agreements or reliance agreements (if multi-site)",
             "Personnel list with roles, qualifications, and training completion"
-          ]
+          ],
+          "phase": 2,
+          "track": "A",
+          "duration": "Compile before submission"
         },
         {
           "text": "Submit Protocol to IRB via iRIS",
@@ -623,34 +915,49 @@
           "link": "https://iris.ouhsc.edu",
           "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
           "timeline": "Exempt determination: 1-2 weeks | Expedited review: 2-3 weeks | Full Board review: 4-6 weeks (from complete submission; meetings held monthly)",
-          "note": "There is no such thing as retroactive IRB approval. Do not begin any research activities until you receive IRB approval notification."
+          "note": "There is no such thing as retroactive IRB approval. Do not begin any research activities until you receive IRB approval notification.",
+          "phase": 2,
+          "track": "A",
+          "duration": "Exempt: 1-2 wk | Expedited: 2-3 wk | Full Board: 4-6 wk"
         },
         {
           "text": "Respond Promptly to IRB Requests",
           "priority": "REQUIRED",
           "order": 5,
-          "note": "If the IRB requests modifications or additional information, respond as quickly as possible. Delays in responding extend the overall approval timeline. Incomplete responses may require additional review cycles."
+          "note": "If the IRB requests modifications or additional information, respond as quickly as possible. Delays in responding extend the overall approval timeline. Incomplete responses may require additional review cycles.",
+          "phase": 2,
+          "track": "A",
+          "duration": ""
         },
         {
           "text": "Consider REDCap for Data Collection and Management",
           "priority": "RECOMMENDED",
           "order": 10,
           "link": "https://redcap.ouhsc.edu/",
-          "note": "REDCap (Research Electronic Data Capture) is a secure, web-based application for building and managing online surveys and research databases. Features include validated data entry, audit trails, automated export to statistical packages, calendar/scheduling modules, and multi-site project access."
+          "note": "REDCap (Research Electronic Data Capture) is a secure, web-based application for building and managing online surveys and research databases. Features include validated data entry, audit trails, automated export to statistical packages, calendar/scheduling modules, and multi-site project access. Plan your REDCap project early so instruments are ready before enrollment begins.",
+          "phase": 0,
+          "track": "B",
+          "duration": "Set up during study planning"
         },
         {
-          "text": "Consider BERD for Biostatistics and Study Design Support",
+          "text": "Consider BERD or BBMC for Biostatistics and Study Design Support",
           "priority": "RECOMMENDED",
           "order": 11,
           "link": "https://osctr.ouhsc.edu/",
-          "note": "The Biostatistics, Epidemiology, and Research Design (BERD) core provides consultation on study design, sample size calculations, statistical analysis plans, and data analysis. Available through the Oklahoma Clinical and Translational Science Institute (OSCTR)."
+          "note": "The Biostatistics, Epidemiology, and Research Design (BERD) core provides consultation on study design, sample size calculations, statistical analysis plans, and data analysis through OSCTR. For pediatric research, the Biomedical and Behavioral Methodology Core (BBMC, ouhsc.edu/bbmc) offers specialized biostatistics support including power analysis, analytics, and protocol consultation. Engage early in study planning, before submissions.",
+          "phase": 0,
+          "track": "B",
+          "duration": "Engage early in study planning"
         },
         {
           "text": "Consider Clinical Research Data Warehouse for Feasibility Assessment",
           "priority": "RECOMMENDED",
           "order": 12,
           "link": "https://research.ouhsc.edu/ocri-resources",
-          "note": "The Clinical Research Data Warehouse can assist with feasibility assessment, potential participant identification, and outcome tracking to support your study planning."
+          "note": "The Clinical Research Data Warehouse can assist with feasibility assessment, potential participant identification, and outcome tracking to support your study planning. Feasibility assessments should be completed prior to submitting your study to IRB or any other review body. Note: Initial consultation is free; additional CRDW services may have associated costs.",
+          "phase": 0,
+          "track": "B",
+          "duration": "Complete before any submissions"
         }
       ],
       "routing": "summary"
@@ -667,7 +974,10 @@
           "order": 1,
           "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet",
           "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
-          "note": "Let the IRB make the determination of whether your QI project constitutes human subjects research. Better to ask than to assume."
+          "note": "Let the IRB make the determination of whether your QI project constitutes human subjects research. Better to ask than to assume.",
+          "phase": 2,
+          "track": "A",
+          "duration": "5-7 business days"
         }
       ],
       "routing": "end_determination"
@@ -684,7 +994,10 @@
           "order": 1,
           "contact": "IRB Office: irb@ouhsc.edu | 405-271-2045",
           "link": "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/OUHSC-Institutional-Review-Board/Consultation-and-Training-Requests",
-          "note": "The IRB offers consultations to help investigators determine requirements for their specific study. This is especially helpful for unusual or complex research designs."
+          "note": "The IRB offers consultations to help investigators determine requirements for their specific study. This is especially helpful for unusual or complex research designs.",
+          "phase": 2,
+          "track": "A",
+          "duration": "Schedule at earliest convenience"
         }
       ],
       "routing": "end_determination"

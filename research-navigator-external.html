@@ -73,8 +73,43 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .btn-large { padding: 1rem 2rem; font-size: 1.1rem; }
 .app-footer { background: #212529; color: white; padding: 2rem; text-align: center; margin-top: auto; }
 .app-footer a { color: #ffc72c; }
+
+/* Gantt Timeline Styles */
+.gantt-timeline { display: flex; flex-direction: column; gap: 2rem; }
+.gantt-phase { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #dee2e6; }
+.gantt-phase-header { background: linear-gradient(135deg, #841617 0%, #6b1213 100%); color: white; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+.gantt-phase-number { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; flex-shrink: 0; }
+.gantt-phase-info h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.15rem; }
+.gantt-phase-info p { font-size: 0.9rem; opacity: 0.9; }
+.gantt-tracks { display: flex; flex-direction: column; }
+.gantt-tracks.parallel { flex-direction: row; flex-wrap: wrap; }
+.gantt-tracks.parallel > .gantt-track { flex: 1 1 280px; min-width: 280px; border-right: 1px solid #dee2e6; border-bottom: none; }
+.gantt-tracks.parallel > .gantt-track:last-child { border-right: none; }
+.gantt-track { padding: 1.25rem 1.5rem; border-bottom: 1px solid #dee2e6; border-left: 4px solid #841617; background: white; }
+.gantt-track:last-child { border-bottom: none; }
+.gantt-track-item { margin-bottom: 1rem; }
+.gantt-track-item:last-child { margin-bottom: 0; }
+.gantt-track-title { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.gantt-item-text { font-weight: 700; font-size: 1rem; color: #212529; flex: 1; min-width: 200px; }
+.gantt-duration-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+.gantt-duration-badge.required { background: #841617; color: white; }
+.gantt-duration-badge.recommended { background: #17a2b8; color: white; }
+.gantt-track-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 0.88rem; color: #6c757d; }
+.gantt-track-meta a { color: #841617; font-weight: 600; text-decoration: none; }
+.gantt-track-meta a:hover { text-decoration: underline; }
+.gantt-track-note { font-size: 0.9rem; color: #6c757d; font-style: italic; margin-bottom: 0.5rem; }
+.gantt-sub-items { margin: 0.5rem 0 0 1.25rem; font-size: 0.88rem; color: #212529; }
+.gantt-sub-items li { margin-bottom: 0.35rem; }
+.gantt-concurrency-note { background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 1rem 1.5rem; font-size: 0.9rem; color: #212529; }
+
+@media print {
+    .app-header, .navigation-buttons, .summary-actions, .app-footer, .btn { display: none !important; }
+    .summary-container { box-shadow: none; padding: 0; }
+    .gantt-phase { page-break-inside: avoid; box-shadow: none; border: 2px solid #333; }
+    .gantt-phase-header { background: #841617 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 @media (max-width: 1024px) { .question-screen.active { grid-template-columns: 1fr; } .checklist-sidebar { order: -1; } .sidebar-sticky { position: relative; } }
-@media (max-width: 768px) { .welcome-card, .question-container, .summary-container { padding: 1.5rem; } .btn { width: 100%; justify-content: center; } .navigation-buttons, .summary-actions, .header-actions { flex-direction: column; } }
+@media (max-width: 768px) { .welcome-card, .question-container, .summary-container { padding: 1.5rem; } .btn { width: 100%; justify-content: center; } .navigation-buttons, .summary-actions, .header-actions { flex-direction: column; } .gantt-tracks.parallel { flex-direction: column; } .gantt-tracks.parallel > .gantt-track { border-right: none; border-bottom: 1px solid #dee2e6; } .gantt-track-title { flex-direction: column; gap: 0.5rem; } }
     </style>
 </head>
 <body>
@@ -116,7 +151,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
                         <button class="btn btn-primary btn-large" id="startBtn">Start New Assessment</button>
                         <button class="btn btn-secondary" id="loadProgressBtn" style="display: none;">Resume Previous Session</button>
                     </div>
-                    <div class="version-info">Version 1.0 | Last Updated: 2025-01-16</div>
+                    <div class="version-info">Version 2.0 | Last Updated: 2025-01-16</div>
                 </div>
             </div>
 
@@ -173,28 +208,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 (function() {
     "use strict";
 
+    var timelinePhases = [
+        {id: 0, name: "Training, Feasibility & Planning", icon: "graduation-cap", note: "Can begin immediately, in parallel with all other phases. Complete feasibility assessments before any submissions."},
+        {id: 1, name: "Pre-Submission Reviews", icon: "clipboard-check", note: "Committee reviews required before IRB submission"},
+        {id: 2, name: "Regulatory Submissions", icon: "file-text", parallel: true, note: "IRB and ORA submissions can proceed concurrently. IRB may request funding details from ORA; ORA may need the IRB protocol number."},
+        {id: 3, name: "Post-Approval & Study Startup", icon: "rocket", note: "Activities after receiving IRB approval"}
+    ];
+
+    var phaseIcons = {"graduation-cap": "\uD83C\uDF93", "clipboard-check": "\uD83D\uDCCB", "file-text": "\uD83D\uDCC4", "rocket": "\uD83D\uDE80"};
+
     var decisionTree = {
         questions: [
-            {id: "q1", text: "Does your project count as human subjects research?", type: "boolean", options: ["I'm unsure", "Yes, this is human subjects research"], helpText: "Human subjects research involves interaction with living individuals or obtaining identifiable private information.", checklistItems: {"I'm unsure": [{text: "Submit Determination of Human Research Worksheet via iRIS", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet", contact: "IRB: irb@ouhsc.edu | 405-271-2045", timeline: "5-7 business days"}]}, next: {"I'm unsure": "end", "Yes, this is human subjects research": "q2"}},
-            {id: "q2", text: "Does your study involve cancer patients, cancer survivors, or cancer-related outcomes?", type: "boolean", options: ["Yes", "No"], helpText: "Includes cancer diagnosis, treatment, prevention, or survivorship studies.", checklistItems: {"Yes": [{text: "Stephenson Cancer Center Protocol Review and Approval", priority: "REQUIRED BEFORE IRB", link: "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/", contact: "scc-prmc@ouhsc.edu", timeline: "3-4 months before study start; allow 2-3 months for all reviews", note: "Includes: Disease Site Group Review, Feasibility Review Committee (FRC), and Protocol Review and Monitoring Committee (PRMC)"}]}, next: {"Yes": "q3", "No": "q3"}},
-            {id: "q3", text: "What type of study is this?", type: "single", options: ["Retrospective chart review / data analysis", "Prospective interventional", "Prospective observational", "Biospecimen collection/analysis", "Quality improvement project", "Other / Not sure"], next: {"Retrospective chart review / data analysis": "q4", "Prospective interventional": "q5", "Prospective observational": "q6", "Biospecimen collection/analysis": "q6", "Quality improvement project": "end", "Other / Not sure": "end"}},
-            {id: "q4", text: "Will you be accessing identifiable patient data (PHI)?", type: "boolean", options: ["Yes", "No"], helpText: "PHI includes names, dates, MRNs, phone numbers, emails, etc.", checklistItems: {"Yes": [{text: "IRB Submission - Full Protocol Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", contact: "IRB: irb@ouhsc.edu", timeline: "2-6 weeks"}, {text: "CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/"}, {text: "HIPAA Training", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HIPAA"}], "No": [{text: "IRB Submission - May Qualify as EXEMPT", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "1-2 weeks"}, {text: "CITI Training", priority: "REQUIRED", link: "https://about.citiprogram.org/"}]}, next: {"Yes": "q7", "No": "q7"}},
-            {id: "q5", text: "Does your study involve an investigational drug, biologic, or device?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Determine if IND/IDE is Required", priority: "CRITICAL", contact: "IRB: irb@ouhsc.edu", timeline: "3-6 months for FDA review"}, {text: "Investigational Pharmacy Coordination", priority: "REQUIRED"}, {text: "IRB Full Board Review", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "4-6 weeks"}], "No": [{text: "IRB Submission Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "2-6 weeks"}]}, next: {"Yes": "q6", "No": "q6"}},
-            {id: "q6", text: "Does your study involve any of the following?", type: "checkbox", options: ["Radiation or radioactive materials", "Recombinant DNA or biohazards", "VA Medical Center patients", "None of the above"], checklistItems: {"Radiation or radioactive materials": [{text: "Radiation Safety Committee Approval", priority: "REQUIRED BEFORE IRB", timeline: "2-3 months"}], "Recombinant DNA or biohazards": [{text: "IBC Approval", priority: "REQUIRED BEFORE IRB", contact: "ibc@ouhsc.edu", timeline: "1-2 months"}], "VA Medical Center patients": [{text: "VA R&D Committee Approval", priority: "REQUIRED", timeline: "2-3 months"}]}, next: "q7"},
-            {id: "q7", text: "Does your study have external funding?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Submit Through ORA", priority: "REQUIRED", contact: "ORA: 405-271-2090", link: "https://research.ouhsc.edu/ora", timeline: "5 days before deadline"}, {text: "Conflict of Interest Disclosure", priority: "REQUIRED"}]}, next: {"Yes": "q8", "No": "q8"}},
-            {id: "q8", text: "Will you need Epic EHR integration?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Contact Clinical Research Informatics", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/epic-for-research", timeline: "2-3 months before start"}]}, next: {"Yes": "q9", "No": "q9"}},
-            {id: "q9", text: "Does your study involve sharing data outside the university OR have a sample size over 500?", type: "checkbox", options: ["Sharing data externally", "Sample size over 500", "None of the above"], checklistItems: {"Sharing data externally": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc"}], "Sample size over 500": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc"}], "None of the above": [{text: "Explore OCRI Tools", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/ocri-resources"}]}, next: "q10"},
-            {id: "q10", text: "Is this a clinical trial that will enroll and track subjects?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Set Up Study in OnCore CTMS", priority: "REQUIRED", link: "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms", timeline: "1-2 months before activation"}, {text: "ClinicalTrials.gov Registration", priority: "REQUIRED", link: "https://clinicaltrials.gov/"}], "No": [{text: "Consider OnCore for Study Management", priority: "RECOMMENDED"}]}, next: "end"}
+            {id: "q1", text: "Does your project count as human subjects research?", type: "boolean", options: ["I'm unsure", "Yes, this is human subjects research"], helpText: "Human subjects research involves interaction with living individuals or obtaining identifiable private information.", checklistItems: {"I'm unsure": [{text: "Submit Determination of Human Research Worksheet via iRIS", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/Offices/Human-Research-Participant-Protection/Norman-Campus-Institutional-Review-Board/How-To-Instructional-Guide/Determination-of-Human-Research-Worksheet", contact: "IRB: irb@ouhsc.edu | 405-271-2045", timeline: "5-7 business days", phase: 2, track: "A", duration: "5-7 business days"}]}, next: {"I'm unsure": "end", "Yes, this is human subjects research": "q2"}},
+            {id: "q2", text: "Does your study involve cancer patients, cancer survivors, or cancer-related outcomes?", type: "boolean", options: ["Yes", "No"], helpText: "Includes cancer diagnosis, treatment, prevention, or survivorship studies.", checklistItems: {"Yes": [{text: "Stephenson Cancer Center Protocol Review and Approval", priority: "REQUIRED BEFORE IRB", link: "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/", contact: "scc-prmc@ouhsc.edu", timeline: "3-4 months before study start; allow 2-3 months for all reviews", note: "Includes: Disease Site Group Review, Feasibility Review Committee (FRC), and Protocol Review and Monitoring Committee (PRMC)", phase: 1, track: "A", duration: "8-12 weeks", details: ["Disease Site Group Review: Assesses applicability to patient populations and identifies competing trials", "Feasibility Review Committee (FRC): Evaluates operational complexities, resource utilization, and cost allocation", "Protocol Review and Monitoring Committee (PRMC): Reviews scientific merit, statistical validity, and design feasibility"]}]}, next: {"Yes": "q3", "No": "q3"}},
+            {id: "q3", text: "What type(s) of study is this? (Select all that apply)", type: "checkbox", helpText: "Many studies span multiple categories. Select all that apply to ensure you receive guidance for every component.", options: ["Retrospective chart review / data analysis", "Prospective interventional", "Prospective observational", "Biospecimen collection/analysis", "Quality improvement project", "Other / Not sure"], next: {"Retrospective chart review / data analysis": "q4", "Prospective interventional": "q5", "Prospective observational": "q6", "Biospecimen collection/analysis": "q6", "Quality improvement project": "end", "Other / Not sure": "end"}},
+            {id: "q4", text: "Will you be accessing identifiable patient data (PHI)?", type: "boolean", options: ["Yes", "No"], helpText: "PHI includes names, dates, MRNs, phone numbers, emails, etc.", checklistItems: {"Yes": [{text: "IRB Submission - Full Protocol Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", contact: "IRB: irb@ouhsc.edu", timeline: "2-6 weeks", phase: 2, track: "A", duration: "Expedited: 2-3 weeks | Full Board: 4-6 weeks"}, {text: "CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/", phase: 0, track: "A", duration: "4-8 hours, valid 3 years"}, {text: "HIPAA Training", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HIPAA", phase: 0, track: "A", duration: "1-2 hours"}], "No": [{text: "IRB Submission - May Qualify as EXEMPT", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "1-2 weeks", phase: 2, track: "A", duration: "Exempt: 1-2 weeks"}, {text: "CITI Training", priority: "REQUIRED", link: "https://about.citiprogram.org/", phase: 0, track: "A", duration: "4-8 hours, valid 3 years"}]}, next: {"Yes": "q7", "No": "q7"}},
+            {id: "q5", text: "Does your study involve an investigational drug, biologic, or device?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Determine if IND/IDE is Required", priority: "CRITICAL", contact: "IRB: irb@ouhsc.edu", timeline: "3-6 months for FDA review", note: "All IND/IDE studies are required to be set up in OnCore CTMS.", phase: 1, track: "B", duration: "3-6 months", details: ["Submit IND application to FDA (Form 1571)", "Complete FDA Form 1572 (Investigator Statement)", "IND safety reporting: 7 days for fatal/life-threatening, 15 days for serious unexpected events", "GCP training required for all clinical trial personnel"]}, {text: "Investigational Pharmacy Coordination", priority: "REQUIRED", phase: 1, track: "F", duration: "Concurrent with IND"}, {text: "IRB Full Board Review", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "4-6 weeks", phase: 2, track: "A", duration: "Full Board: 4-6 weeks"}], "No": [{text: "IRB Submission Required", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", timeline: "2-6 weeks", phase: 2, track: "A", duration: "Expedited: 2-3 weeks | Full Board: 4-6 weeks"}]}, next: {"Yes": "q6", "No": "q6"}},
+            {id: "q6", text: "Does your study involve any of the following?", type: "checkbox", options: ["Radiation or radioactive materials", "Recombinant DNA or biohazards", "VA Medical Center patients", "None of the above"], checklistItems: {"Radiation or radioactive materials": [{text: "Radiation Safety Committee Approval", priority: "REQUIRED BEFORE IRB", timeline: "2-3 months", phase: 1, track: "C", duration: "8-12 weeks"}], "Recombinant DNA or biohazards": [{text: "IBC Approval", priority: "REQUIRED BEFORE IRB", contact: "ibc@ouhsc.edu", timeline: "1-2 months", phase: 1, track: "D", duration: "4-8 weeks"}], "VA Medical Center patients": [{text: "VA R&D Committee Approval", priority: "REQUIRED", timeline: "2-3 months", phase: 1, track: "E", duration: "8-12 weeks"}]}, next: "q7"},
+            {id: "q7", text: "Does your study have external funding?", type: "boolean", options: ["Yes", "No"], helpText: "Tip: IRB and ORA submissions can proceed concurrently in most cases. Begin both simultaneously to minimize your total timeline.", checklistItems: {"Yes": [{text: "Submit Through ORA", priority: "REQUIRED", contact: "ORA: 405-271-2090", link: "https://research.ouhsc.edu/ora", timeline: "5 days before deadline", note: "IRB and ORA submissions can proceed concurrently; ORA requires the grant application, budget, and institutional commitment letters.", phase: 2, track: "B", duration: "5 business days before deadline"}, {text: "Conflict of Interest Disclosure", priority: "REQUIRED", phase: 2, track: "C", duration: "1-2 weeks"}]}, next: {"Yes": "q8", "No": "q8"}},
+            {id: "q8", text: "Will you need Epic EHR integration?", type: "boolean", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Contact Clinical Research Informatics", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/epic-for-research", timeline: "2-3 months before start", phase: 3, track: "B", duration: "2-3 months"}, {text: "Obtain Epic Account and Access Permissions", priority: "REQUIRED", note: "Your supervisor/Epic supervisor must submit the access request on your behalf. Two types: full documentation access or read-only access.", phase: 3, track: "B", duration: "Submit early"}]}, next: {"Yes": "q9", "No": "q9"}},
+            {id: "q9", text: "Does your study involve sharing data outside the university OR have a sample size over 500?", type: "checkbox", options: ["Sharing data externally", "Sample size over 500", "None of the above"], checklistItems: {"Sharing data externally": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc", note: "Submit CRIOC review when your IRB submission is submitted.", phase: 2, track: "D", duration: "Submit with IRB"}], "Sample size over 500": [{text: "CRIOC Review Required", priority: "REQUIRED", link: "https://research.ouhsc.edu/crioc", note: "Submit CRIOC review when your IRB submission is submitted.", phase: 2, track: "D", duration: "Submit with IRB"}], "None of the above": [{text: "Explore OCRI Tools", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/ocri-resources", phase: 3, track: "D", duration: ""}]}, next: "q10"},
+            {id: "q10", text: "Does your study require OnCore CTMS? (Select all that apply)", type: "checkbox", helpText: "OnCore is required if ANY of the following apply: clinical trial enrolling subjects, billable component, MyChart recruitment, subject study status in Epic, or IND/IDE study.", options: ["Clinical trial enrolling and tracking subjects", "Study has a billable component", "Using MyChart messaging for recruitment", "Subject study status needs to appear in Epic/OnCore", "Study involves an IND or IDE", "None of the above"], checklistItems: {"Clinical trial enrolling and tracking subjects": [{text: "Set Up Study in OnCore CTMS", priority: "REQUIRED", link: "https://research.ouhsc.edu/research-support/office-of-clinical-research-informatics/research-clinical-informatics-resources/oncore-clinical-trials-management-system-ctms", timeline: "1-2 months before activation", phase: 3, track: "A", duration: "1-2 months"}, {text: "Complete OnCore Training (Basics of OnCore)", priority: "REQUIRED", link: "https://research.ouhsc.edu/oncore", note: "Complete 'Basics of OnCore' curriculum via OnPoint before account activation. Account creation takes 3-5 business days after training. Contact CTMS-support@ouhsc.edu or SCCTrainingandSupport@ou.edu (oncology).", contact: "CTMS-support@ouhsc.edu | Oncology: SCCTrainingandSupport@ou.edu", phase: 3, track: "A", duration: "1-2 weeks"}, {text: "ClinicalTrials.gov Registration", priority: "REQUIRED", link: "https://clinicaltrials.gov/", note: "Required by FDAAA 801 and Final Rule (42 CFR Part 11). Results must be reported within 1 year of primary completion date.", phase: 3, track: "A", duration: "Within 21 days of first enrollment; results within 1 year"}], "Study has a billable component": [{text: "OnCore CTMS Required - Billable Study", priority: "REQUIRED", note: "Studies with billable components must be set up in OnCore for financial management and coverage analysis.", phase: 3, track: "A", duration: "1-2 months"}], "Using MyChart messaging for recruitment": [{text: "OnCore CTMS Required - MyChart Recruitment", priority: "REQUIRED", note: "Studies using MyChart messaging for recruitment must be registered in OnCore.", phase: 3, track: "A", duration: "1-2 months"}], "Subject study status needs to appear in Epic/OnCore": [{text: "OnCore CTMS Required - Subject Study Status in Epic", priority: "REQUIRED", note: "Study must be configured in OnCore with OnCore-Epic interface for subject status.", phase: 3, track: "A", duration: "1-2 months"}], "Study involves an IND or IDE": [{text: "OnCore CTMS Required - IND/IDE Study", priority: "REQUIRED", note: "All IND/IDE studies are required to be set up in OnCore for regulatory compliance.", phase: 3, track: "A", duration: "1-2 months"}], "None of the above": [{text: "Consider OnCore for Study Management", priority: "RECOMMENDED", phase: 3, track: "A", duration: ""}]}, next: "q10b"},
+            {id: "q10b", text: "Is OU Health Campus the IRB board of record for this study?", type: "boolean", helpText: "If OUHSC IRB is the reviewing IRB, your iRIS submission can be automatically linked to OnCore. Otherwise, you will need to create your OnCore protocol manually.", options: ["Yes", "No"], checklistItems: {"Yes": [{text: "Complete iRIS-to-OnCore Questionnaire", priority: "REQUIRED", link: "https://redcap.link/iris2oncore", note: "Complete this REDCap questionnaire to auto-create your OnCore protocol from iRIS.", phase: 3, track: "A", duration: "Complete after iRIS submission"}, {text: "OnCore Calendar and Coverage Analysis", priority: "REQUIRED", note: "Work with OnCore support to build study calendar and coverage analysis.", contact: "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu", phase: 3, track: "A", duration: "Concurrent with IRB review"}, {text: "Complete Research Study Activation Questionnaire", priority: "REQUIRED", note: "Once OnCore protocol, calendar, and coverage analysis are finalized, complete this to push the study to Epic.", phase: 3, track: "A", duration: "After OnCore setup is complete"}], "No": [{text: "Create OnCore Protocol Manually", priority: "REQUIRED", note: "Create OnCore protocol manually since OU Health Campus is not the IRB of record.", contact: "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu", phase: 3, track: "A", duration: "1-2 months"}, {text: "OnCore Calendar and Coverage Analysis", priority: "REQUIRED", note: "Work with OnCore support to build study calendar and coverage analysis.", contact: "Non-oncology: Geneva-Daniel@ou.edu | Oncology: SCCTrainingandSupport@ou.edu", phase: 3, track: "A", duration: "Concurrent with IRB review"}, {text: "Complete Research Study Activation Questionnaire", priority: "REQUIRED", note: "Once OnCore protocol, calendar, and coverage analysis are finalized, complete this to push the study to Epic.", phase: 3, track: "A", duration: "After OnCore setup is complete"}]}, next: "end"}
         ],
         fixedItems: [
-            {text: "Complete CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/", timeline: "Valid 3 years"},
-            {text: "Complete In-House IRB Training", priority: "REQUIRED", contact: "IRB: irb@ouhsc.edu"},
-            {text: "Compile IRB Submission Packet", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB"},
-            {text: "Submit Protocol to IRB via iRIS", priority: "REQUIRED", link: "https://iris.ouhsc.edu", timeline: "1-6 weeks depending on review type"},
-            {text: "Respond Promptly to IRB Requests", priority: "REQUIRED"},
-            {text: "Consider REDCap for Data Collection and Management", priority: "RECOMMENDED", link: "https://redcap.ouhsc.edu/", note: "Secure web-based application for surveys and research databases with audit trails and export to statistical packages."},
-            {text: "Consider BERD for Biostatistics and Study Design Support", priority: "RECOMMENDED", link: "https://osctr.ouhsc.edu/", note: "Study design, sample size calculations, statistical analysis plans through OSCTR."},
-            {text: "Consider Clinical Research Data Warehouse for Feasibility Assessment", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/ocri-resources", note: "Feasibility assessment, participant identification, and outcome tracking."}
+            {text: "Complete CITI Human Subjects Training", priority: "REQUIRED", link: "https://about.citiprogram.org/", timeline: "Valid 3 years", phase: 0, track: "A", duration: "4-8 hours, valid 3 years"},
+            {text: "Complete In-House IRB Training", priority: "REQUIRED", contact: "IRB: irb@ouhsc.edu", phase: 0, track: "A", duration: "Schedule with IRB"},
+            {text: "Compile IRB Submission Packet", priority: "REQUIRED", link: "https://compliance.ouhsc.edu/HRPP/HSC-IRB", phase: 2, track: "A", duration: "Compile before submission"},
+            {text: "Submit Protocol to IRB via iRIS", priority: "REQUIRED", link: "https://iris.ouhsc.edu", timeline: "1-6 weeks depending on review type", phase: 2, track: "A", duration: "Exempt: 1-2 wk | Expedited: 2-3 wk | Full Board: 4-6 wk"},
+            {text: "Respond Promptly to IRB Requests", priority: "REQUIRED", phase: 2, track: "A", duration: ""},
+            {text: "Consider REDCap for Data Collection and Management", priority: "RECOMMENDED", link: "https://redcap.ouhsc.edu/", note: "Secure web-based application for surveys and research databases with audit trails and export to statistical packages. Plan your REDCap project early so instruments are ready before enrollment begins.", phase: 0, track: "B", duration: "Set up during study planning"},
+            {text: "Consider BERD or BBMC for Biostatistics and Study Design Support", priority: "RECOMMENDED", link: "https://osctr.ouhsc.edu/", note: "BERD (via OSCTR) provides study design, sample size calculations, and statistical analysis plans. For pediatric research, the Biomedical and Behavioral Methodology Core (BBMC, ouhsc.edu/bbmc) offers specialized biostatistics support including power analysis, analytics, and protocol consultation. Engage early in study planning, before submissions.", phase: 0, track: "B", duration: "Engage early in planning"},
+            {text: "Consider Clinical Research Data Warehouse for Feasibility Assessment", priority: "RECOMMENDED", link: "https://research.ouhsc.edu/ocri-resources", note: "Feasibility assessment, participant identification, and outcome tracking. Complete before any submissions. Note: Initial consultation is free; additional CRDW services may have associated costs.", phase: 0, track: "B", duration: "Complete before any submissions"}
         ]
     };
 
@@ -202,7 +247,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
         currentIndex: 0,
         answers: {},
         checklist: [],
-        history: []
+        history: [],
+        pendingRoutes: []
     };
 
     function $(id) { return document.getElementById(id); }
@@ -212,6 +258,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
         state.answers = {};
         state.checklist = [];
         state.history = [];
+        state.pendingRoutes = [];
 
         $("welcomeScreen").style.display = "none";
         $("questionScreen").className = "question-screen active";
@@ -281,9 +328,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 
         $("prevBtn").style.display = state.history.length > 0 ? "inline-flex" : "none";
 
-        var isLast = (q.next === "end" || (typeof q.next === "object" && q.next[savedAnswer] === "end"));
-        $("finishBtn").style.display = isLast && savedAnswer ? "inline-flex" : "none";
-        $("nextBtn").style.display = !isLast && savedAnswer ? "inline-flex" : "none";
+        // Determine if this is the last question or an endpoint
+        var isEnd = false;
+        if (typeof q.next === "string") {
+            isEnd = (q.next === "end");
+        } else if (typeof q.next === "object" && savedAnswer) {
+            if (Array.isArray(savedAnswer)) {
+                // For checkbox with object routing (q3), not an endpoint unless all selections go to "end"
+                isEnd = savedAnswer.length > 0 && savedAnswer.every(function(sel) {
+                    return q.next[sel] === "end";
+                });
+            } else {
+                isEnd = (q.next[savedAnswer] === "end");
+            }
+        }
+
+        var hasAnswer = false;
+        if (Array.isArray(savedAnswer)) {
+            hasAnswer = savedAnswer.length > 0;
+        } else {
+            hasAnswer = !!savedAnswer;
+        }
+
+        $("finishBtn").style.display = isEnd && hasAnswer ? "inline-flex" : "none";
+        $("nextBtn").style.display = !isEnd && hasAnswer ? "inline-flex" : "none";
     }
 
     function selectOption(qid, option) {
@@ -306,10 +374,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
         var label = checkbox.parentElement;
         label.className = "checkbox-option" + (checkbox.checked ? " selected" : "");
 
-        var hasSelection = state.answers[qid] && state.answers[qid].length > 0;
+        // Re-evaluate navigation buttons
         var q = decisionTree.questions[state.currentIndex];
-        $("nextBtn").style.display = hasSelection && q.next !== "end" ? "inline-flex" : "none";
-        $("finishBtn").style.display = hasSelection && q.next === "end" ? "inline-flex" : "none";
+        var savedAnswer = state.answers[q.id];
+        var hasSelection = savedAnswer && savedAnswer.length > 0;
+
+        var isEnd = false;
+        if (typeof q.next === "object" && hasSelection) {
+            isEnd = savedAnswer.every(function(sel) {
+                return q.next[sel] === "end";
+            });
+        } else if (typeof q.next === "string") {
+            isEnd = (q.next === "end");
+        }
+
+        $("nextBtn").style.display = hasSelection && !isEnd ? "inline-flex" : "none";
+        $("finishBtn").style.display = hasSelection && isEnd ? "inline-flex" : "none";
     }
 
     function updateChecklist(qid, answer) {
@@ -327,7 +407,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
             if (q.checklistItems[ans]) {
                 for (var j = 0; j < q.checklistItems[ans].length; j++) {
                     var item = q.checklistItems[ans][j];
-                    state.checklist.push({qid: qid, text: item.text, priority: item.priority, link: item.link, contact: item.contact, timeline: item.timeline});
+                    state.checklist.push({
+                        qid: qid,
+                        text: item.text,
+                        priority: item.priority,
+                        link: item.link,
+                        contact: item.contact,
+                        timeline: item.timeline,
+                        note: item.note,
+                        details: item.details,
+                        phase: item.phase,
+                        track: item.track,
+                        duration: item.duration
+                    });
                 }
             }
         }
@@ -343,37 +435,117 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
         var html = '';
         for (var i = 0; i < state.checklist.length; i++) {
             var item = state.checklist[i];
-            var badge = item.priority.indexOf("REQUIRED") !== -1 ? "Required" : "Recommended";
+            var badge = item.priority.indexOf("REQUIRED") !== -1 || item.priority.indexOf("CRITICAL") !== -1 ? "Required" : "Recommended";
             html += '<div class="checklist-item"><div class="checklist-item-header">' + badge + ': ' + item.text + '</div></div>';
         }
         container.innerHTML = html;
     }
 
+    function findQuestionIndex(qid) {
+        for (var i = 0; i < decisionTree.questions.length; i++) {
+            if (decisionTree.questions[i].id === qid) return i;
+        }
+        return -1;
+    }
+
     function nextQuestion() {
         var q = decisionTree.questions[state.currentIndex];
         var answer = state.answers[q.id];
-        if (!answer) return;
+        if (!answer || (Array.isArray(answer) && answer.length === 0)) return;
 
-        state.history.push(state.currentIndex);
+        // Save to history with pendingRoutes snapshot
+        state.history.push({
+            index: state.currentIndex,
+            pendingRoutes: state.pendingRoutes.slice()
+        });
 
+        // Special handling for q3 multi-select study type
+        if (q.id === "q3") {
+            var selected = answer; // array
+            var routeMap = q.next;
+
+            // Build ordered route queue, separating endpoints from substantive
+            var routes = [];
+            for (var i = 0; i < q.options.length; i++) {
+                var opt = q.options[i];
+                if (selected.indexOf(opt) !== -1) {
+                    var routeId = routeMap[opt];
+                    if (routeId === "end") {
+                        // Endpoint - no question to visit, but we could inject items here
+                        // (QI and Other/Not sure don't have checklistItems in the embedded tree)
+                    } else if (routes.indexOf(routeId) === -1) {
+                        routes.push(routeId);
+                    }
+                }
+            }
+
+            // Clean stale answers/items from deselected sub-questions
+            var allSubIds = ["q4", "q5"];
+            for (var i = 0; i < allSubIds.length; i++) {
+                if (routes.indexOf(allSubIds[i]) === -1) {
+                    delete state.answers[allSubIds[i]];
+                    state.checklist = state.checklist.filter(function(item) { return item.qid !== allSubIds[i]; });
+                }
+            }
+            updateLiveChecklist();
+
+            if (routes.length === 0) {
+                showSummary();
+                return;
+            }
+
+            state.pendingRoutes = routes.slice(1);
+            var nextIdx = findQuestionIndex(routes[0]);
+            if (nextIdx !== -1) {
+                state.currentIndex = nextIdx;
+                showQuestion();
+            } else {
+                showSummary();
+            }
+            return;
+        }
+
+        // Check for pending routes when leaving study-type sub-questions
+        var subQuestionIds = ["q4", "q5"];
+        if (state.pendingRoutes.length > 0 && subQuestionIds.indexOf(q.id) !== -1) {
+            var nextRoute = state.pendingRoutes.shift();
+            var nextIdx = findQuestionIndex(nextRoute);
+            if (nextIdx !== -1) {
+                state.currentIndex = nextIdx;
+                showQuestion();
+                return;
+            }
+        }
+
+        // Skip q10b if user selected only "None of the above" on q10 (OnCore not needed)
+        if (q.id === "q10") {
+            var q10Answer = state.answers["q10"] || [];
+            var onlyNone = q10Answer.length === 1 && q10Answer[0] === "None of the above";
+            if (onlyNone) {
+                showSummary();
+                return;
+            }
+        }
+
+        // Normal routing
         var nextId = typeof q.next === "string" ? q.next : q.next[answer] || q.next[Object.keys(q.next)[0]];
         if (nextId === "end") {
             showSummary();
             return;
         }
 
-        for (var i = 0; i < decisionTree.questions.length; i++) {
-            if (decisionTree.questions[i].id === nextId) {
-                state.currentIndex = i;
-                break;
-            }
+        var idx = findQuestionIndex(nextId);
+        if (idx !== -1) {
+            state.currentIndex = idx;
         }
         showQuestion();
     }
 
     function previousQuestion() {
         if (state.history.length === 0) return;
-        state.currentIndex = state.history.pop();
+        var prev = state.history.pop();
+        state.currentIndex = prev.index;
+        state.pendingRoutes = prev.pendingRoutes || [];
         showQuestion();
     }
 
@@ -390,36 +562,116 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
             if (!exists) allItems.push(decisionTree.fixedItems[i]);
         }
 
-        var required = allItems.filter(function(x) { return x.priority && x.priority.indexOf("REQUIRED") !== -1; });
-        var recommended = allItems.filter(function(x) { return x.priority && x.priority.indexOf("RECOMMENDED") !== -1; });
+        // Build Gantt-style summary
+        var phaseGroups = {};
+        for (var i = 0; i < allItems.length; i++) {
+            var phase = allItems[i].phase !== undefined ? allItems[i].phase : 2;
+            if (!phaseGroups[phase]) phaseGroups[phase] = [];
+            phaseGroups[phase].push(allItems[i]);
+        }
 
-        var html = '';
-        if (required.length > 0) {
-            html += '<div class="summary-section"><h3>Required Actions</h3>';
-            for (var i = 0; i < required.length; i++) {
-                var item = required[i];
-                html += '<div class="summary-item"><div class="summary-item-title">' + (i+1) + '. ' + item.text + '</div>';
-                html += '<div class="summary-item-meta">';
-                if (item.timeline) html += '<span>Timeline: ' + item.timeline + '</span>';
-                if (item.contact) html += '<span>Contact: ' + item.contact + '</span>';
-                if (item.link) html += '<span><a href="' + item.link + '" target="_blank">More Info</a></span>';
-                html += '</div></div>';
+        var html = '<div class="gantt-timeline">';
+
+        for (var p = 0; p < timelinePhases.length; p++) {
+            var phaseDef = timelinePhases[p];
+            var items = phaseGroups[phaseDef.id];
+            if (!items || items.length === 0) continue;
+
+            var icon = phaseIcons[phaseDef.icon] || "";
+
+            html += '<div class="gantt-phase">';
+            html += '<div class="gantt-phase-header">';
+            html += '<div class="gantt-phase-number">' + phaseDef.id + '</div>';
+            html += '<div class="gantt-phase-info"><h4>' + icon + ' ' + phaseDef.name + '</h4>';
+            html += '<p>' + phaseDef.note + '</p></div>';
+            html += '</div>';
+
+            // Group by track
+            var trackGroups = {};
+            for (var i = 0; i < items.length; i++) {
+                var track = items[i].track || "Z";
+                if (!trackGroups[track]) trackGroups[track] = [];
+                trackGroups[track].push(items[i]);
             }
+
+            var trackKeys = Object.keys(trackGroups).sort();
+            html += '<div class="gantt-tracks' + (phaseDef.parallel ? ' parallel' : '') + '">';
+
+            for (var t = 0; t < trackKeys.length; t++) {
+                var trackItems = trackGroups[trackKeys[t]];
+                html += '<div class="gantt-track">';
+
+                for (var ti = 0; ti < trackItems.length; ti++) {
+                    var item = trackItems[ti];
+                    var isReq = item.priority && (item.priority.indexOf("REQUIRED") !== -1 || item.priority.indexOf("CRITICAL") !== -1);
+                    var badgeClass = isReq ? "required" : "recommended";
+
+                    html += '<div class="gantt-track-item">';
+                    html += '<div class="gantt-track-title">';
+                    html += '<span class="gantt-item-text">' + item.text + '</span>';
+                    if (item.duration) {
+                        html += '<span class="gantt-duration-badge ' + badgeClass + '">' + item.duration + '</span>';
+                    }
+                    html += '</div>';
+
+                    if (item.contact || item.link) {
+                        html += '<div class="gantt-track-meta">';
+                        if (item.contact) html += '<span>' + item.contact + '</span>';
+                        if (item.link) html += '<a href="' + item.link + '" target="_blank">More Info</a>';
+                        html += '</div>';
+                    }
+
+                    if (item.note) {
+                        html += '<p class="gantt-track-note">' + item.note + '</p>';
+                    }
+
+                    if (item.details && item.details.length > 0) {
+                        html += '<ul class="gantt-sub-items">';
+                        for (var d = 0; d < item.details.length; d++) {
+                            html += '<li>' + item.details[d] + '</li>';
+                        }
+                        html += '</ul>';
+                    }
+
+                    html += '</div>';
+                }
+
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            // Concurrency note for parallel phases
+            if (phaseDef.parallel) {
+                html += '<div class="gantt-concurrency-note"><strong>Note:</strong> ' + phaseDef.note + '</div>';
+            }
+
             html += '</div>';
         }
-        if (recommended.length > 0) {
-            html += '<div class="summary-section"><h3>Recommended Actions</h3>';
-            for (var i = 0; i < recommended.length; i++) {
-                var item = recommended[i];
-                html += '<div class="summary-item"><div class="summary-item-title">' + (i+1) + '. ' + item.text + '</div>';
-                html += '<div class="summary-item-meta">';
-                if (item.timeline) html += '<span>Timeline: ' + item.timeline + '</span>';
-                if (item.contact) html += '<span>Contact: ' + item.contact + '</span>';
-                if (item.link) html += '<span><a href="' + item.link + '" target="_blank">More Info</a></span>';
-                html += '</div></div>';
-            }
-            html += '</div>';
+
+        html += '</div>';
+
+        // Timeline estimate
+        var hasCancer = false, hasIND = false, hasFunding = false;
+        for (var i = 0; i < allItems.length; i++) {
+            if (allItems[i].text.indexOf("Cancer Center") !== -1 || allItems[i].text.indexOf("PRMC") !== -1) hasCancer = true;
+            if (allItems[i].text.indexOf("IND") !== -1) hasIND = true;
+            if (allItems[i].text.indexOf("ORA") !== -1) hasFunding = true;
         }
+
+        html += '<div class="summary-section"><h3>Estimated Timeline</h3>';
+        html += '<div class="info-box"><p>Based on your study characteristics:</p><ul>';
+        if (hasCancer) html += '<li><strong>Cancer Center Reviews:</strong> 2-3 months</li>';
+        if (hasIND) html += '<li><strong>IND Preparation & FDA Review:</strong> 3-6 months</li>';
+        if (hasFunding) html += '<li><strong>Grant Submission:</strong> Allow 5 days before sponsor deadline</li>';
+        html += '<li><strong>IRB Review:</strong> 2-6 weeks depending on review type</li>';
+        html += '</ul>';
+        var totalMonths = 1;
+        if (hasCancer) totalMonths += 2.5;
+        if (hasIND) totalMonths += 4;
+        html += '<p><strong>Total estimated time:</strong> ' + totalMonths + '-' + (totalMonths + 2) + ' months</p>';
+        html += '</div></div>';
+
         $("summaryContent").innerHTML = html;
     }
 
@@ -445,6 +697,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
             state.checklist = data.checklist;
             state.currentIndex = data.currentIndex;
             state.history = data.history;
+            state.pendingRoutes = data.pendingRoutes || [];
             $("welcomeScreen").style.display = "none";
             $("questionScreen").className = "question-screen active";
             $("restartBtn").style.display = "inline-flex";
@@ -459,9 +712,42 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
     function emailChecklist() {
         var subject = encodeURIComponent("OUHSC Research Compliance Checklist");
         var body = "OUHSC Research Compliance Checklist\n\n";
-        for (var i = 0; i < state.checklist.length; i++) {
-            body += (i+1) + ". " + state.checklist[i].text + "\n";
+
+        var allItems = state.checklist.slice();
+        for (var i = 0; i < decisionTree.fixedItems.length; i++) {
+            var exists = false;
+            for (var j = 0; j < allItems.length; j++) {
+                if (allItems[j].text === decisionTree.fixedItems[i].text) { exists = true; break; }
+            }
+            if (!exists) allItems.push(decisionTree.fixedItems[i]);
         }
+
+        // Text-based Gantt for email
+        var phaseGroups = {};
+        for (var i = 0; i < allItems.length; i++) {
+            var phase = allItems[i].phase !== undefined ? allItems[i].phase : 2;
+            if (!phaseGroups[phase]) phaseGroups[phase] = [];
+            phaseGroups[phase].push(allItems[i]);
+        }
+
+        for (var p = 0; p < timelinePhases.length; p++) {
+            var phaseDef = timelinePhases[p];
+            var items = phaseGroups[phaseDef.id];
+            if (!items || items.length === 0) continue;
+
+            body += "--- Phase " + phaseDef.id + ": " + phaseDef.name + " ---\n";
+            body += phaseDef.note + "\n\n";
+
+            for (var i = 0; i < items.length; i++) {
+                body += "  " + (i + 1) + ". " + items[i].text + "\n";
+                if (items[i].priority) body += "     Priority: " + items[i].priority + "\n";
+                if (items[i].duration) body += "     Duration: " + items[i].duration + "\n";
+                if (items[i].contact) body += "     Contact: " + items[i].contact + "\n";
+                body += "\n";
+            }
+            body += "\n";
+        }
+
         body += "\nContact: IRB Office irb@ouhsc.edu | 405-271-2045";
         window.location.href = "mailto:?subject=" + subject + "&body=" + encodeURIComponent(body);
     }

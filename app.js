@@ -578,8 +578,14 @@ class ResearchNavigator {
         const finalQuestion = this.decisionTree.questions.find(q => q.id === 'q10_final');
         if (finalQuestion && finalQuestion.fixedChecklistItems) {
             finalQuestion.fixedChecklistItems.forEach(item => {
-                if (!criticalItems.some(ci => ci.text === item.text)) {
-                    criticalItems.push(item);
+                if (item.priority && item.priority.includes('RECOMMENDED')) {
+                    if (!recommendedItems.some(ri => ri.text === item.text)) {
+                        recommendedItems.push(item);
+                    }
+                } else {
+                    if (!criticalItems.some(ci => ci.text === item.text)) {
+                        criticalItems.push(item);
+                    }
                 }
             });
         }

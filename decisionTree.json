@@ -36,6 +36,22 @@
       "OCRI_Resources": {
         "link": "https://research.ouhsc.edu/ocri-resources",
         "note": "Office of Clinical Research Informatics Tools and Resources"
+      },
+      "REDCap": {
+        "link": "https://redcap.ouhsc.edu/",
+        "note": "Research Electronic Data Capture - Secure data collection and management"
+      },
+      "BERD": {
+        "link": "https://osctr.ouhsc.edu/",
+        "note": "Biostatistics, Epidemiology, and Research Design support"
+      },
+      "Clinical_Research_Data_Warehouse": {
+        "link": "https://research.ouhsc.edu/ocri-resources",
+        "note": "Feasibility assessment, participant identification, and outcome tracking"
+      },
+      "OSCTR": {
+        "link": "https://osctr.ouhsc.edu/",
+        "note": "Oklahoma Clinical and Translational Science Institute"
       }
     }
   },
@@ -73,29 +89,18 @@
       "checklistItems": {
         "Yes": [
           {
-            "text": "Disease Site Group Review and Endorsement",
+            "text": "Stephenson Cancer Center Protocol Review and Approval",
             "priority": "REQUIRED BEFORE IRB",
             "order": 1,
-            "contact": "scc-prmc@ouhsc.edu",
-            "timeline": "Submit 3-4 months before intended study start",
-            "note": "The Disease Site Group will review the protocol to assess applicability to patient populations, identify competing trials, and ensure alignment with Disease Group goals."
-          },
-          {
-            "text": "Feasibility Review Committee Approval",
-            "priority": "REQUIRED BEFORE IRB",
-            "order": 2,
-            "contact": "scc-prmc@ouhsc.edu",
-            "timeline": "After Disease Site Group approval",
-            "note": "The FRC assesses operational complexities to ensure effective resource utilization, operational feasibility, and appropriate cost allocation."
-          },
-          {
-            "text": "Protocol Review and Monitoring Committee (PRMC) Full Approval",
-            "priority": "REQUIRED BEFORE IRB",
-            "order": 3,
             "link": "https://www.ouhealth.com/stephenson-cancer-center/cancer-research/cancer-shared-resources-services/protocol-review-monitoring/",
             "contact": "scc-prmc@ouhsc.edu",
-            "timeline": "After Feasibility Review; allow 2-3 months total for all cancer center reviews",
-            "note": "PRMC reviews for scientific merit, statistical validity, design feasibility, inclusion of underrepresented populations, and study prioritization. IRB approval cannot be granted without PRMC approval."
+            "timeline": "Submit 3-4 months before intended study start; allow 2-3 months total for all cancer center reviews",
+            "note": "Cancer-related studies must complete the following sequential reviews before IRB submission. IRB approval cannot be granted without PRMC approval.",
+            "details": [
+              "Disease Site Group Review: Assesses applicability to patient populations, identifies competing trials, and ensures alignment with Disease Group goals",
+              "Feasibility Review Committee (FRC): Evaluates operational complexities, resource utilization, operational feasibility, and cost allocation",
+              "Protocol Review and Monitoring Committee (PRMC): Reviews scientific merit, statistical validity, design feasibility, inclusion of underrepresented populations, and study prioritization"
+            ]
           }
         ]
       },
@@ -625,6 +630,27 @@
           "priority": "REQUIRED",
           "order": 5,
           "note": "If the IRB requests modifications or additional information, respond as quickly as possible. Delays in responding extend the overall approval timeline. Incomplete responses may require additional review cycles."
+        },
+        {
+          "text": "Consider REDCap for Data Collection and Management",
+          "priority": "RECOMMENDED",
+          "order": 10,
+          "link": "https://redcap.ouhsc.edu/",
+          "note": "REDCap (Research Electronic Data Capture) is a secure, web-based application for building and managing online surveys and research databases. Features include validated data entry, audit trails, automated export to statistical packages, calendar/scheduling modules, and multi-site project access."
+        },
+        {
+          "text": "Consider BERD for Biostatistics and Study Design Support",
+          "priority": "RECOMMENDED",
+          "order": 11,
+          "link": "https://osctr.ouhsc.edu/",
+          "note": "The Biostatistics, Epidemiology, and Research Design (BERD) core provides consultation on study design, sample size calculations, statistical analysis plans, and data analysis. Available through the Oklahoma Clinical and Translational Science Institute (OSCTR)."
+        },
+        {
+          "text": "Consider Clinical Research Data Warehouse for Feasibility Assessment",
+          "priority": "RECOMMENDED",
+          "order": 12,
+          "link": "https://research.ouhsc.edu/ocri-resources",
+          "note": "The Clinical Research Data Warehouse can assist with feasibility assessment, potential participant identification, and outcome tracking to support your study planning."
         }
       ],
       "routing": "summary"
